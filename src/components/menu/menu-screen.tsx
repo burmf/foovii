@@ -72,7 +72,7 @@ function MenuView({
 
     const sections = categories
       .map((category) => document.getElementById(category.id))
-      .filter((section): section is Element => Boolean(section));
+      .filter((section): section is HTMLElement => section instanceof HTMLElement);
 
     sections.forEach((section) => observer.observe(section));
 
