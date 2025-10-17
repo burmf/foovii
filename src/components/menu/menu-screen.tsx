@@ -4,8 +4,6 @@ import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import type { MenuCategory, MenuItem, StoreConfig } from "@/lib/types";
 
-import { useEffect } from "react";
-
 import { CartBar } from "./cart-bar";
 import { CartProvider, useCart } from "./cart-context";
 import { CartButton } from "./cart-button";
