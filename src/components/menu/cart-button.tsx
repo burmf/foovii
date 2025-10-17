@@ -7,10 +7,15 @@ import { useCart } from "./cart-context";
 
 interface CartButtonProps {
   onClick: () => void;
+  isOpen?: boolean;
 }
 
-export function CartButton({ onClick }: CartButtonProps) {
+export function CartButton({ onClick, isOpen = false }: CartButtonProps) {
   const { totalQuantity } = useCart();
+
+  if (isOpen) {
+    return null;
+  }
 
   return (
     <button

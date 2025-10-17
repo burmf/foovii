@@ -18,6 +18,7 @@ export function MenuNav({ categories, activeCategory }: MenuNavProps) {
             <Link
               key={category.id}
               href={`#${category.id}`}
+              aria-current={isActive ? "true" : undefined}
               className={cn(
                 "whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors",
                 isActive

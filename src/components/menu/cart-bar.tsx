@@ -8,14 +8,15 @@ import { useCart } from "./cart-context";
 
 interface CartBarProps {
   onReview: () => void;
+  isReviewOpen?: boolean;
 }
 
-export function CartBar({ onReview }: CartBarProps) {
+export function CartBar({ onReview, isReviewOpen = false }: CartBarProps) {
   const { subtotal, totalQuantity } = useCart();
 
   return (
     <AnimatePresence>
-      {totalQuantity > 0 ? (
+      {totalQuantity > 0 && !isReviewOpen ? (
         <motion.div
           initial={{ y: 80, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

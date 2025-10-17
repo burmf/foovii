@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 
 import type { MenuCategory, MenuItem, StoreConfig } from "@/lib/types";
+
+import { useEffect } from "react";
 
 import { CartBar } from "./cart-bar";
 import { CartProvider, useCart } from "./cart-context";
 import { CartButton } from "./cart-button";
-import { CartReviewModal } from "./cart-review-modal";
+import { CartSheet } from "./cart-sheet";
 import { MenuHeader } from "./menu-header";
 import { MenuItemModal } from "./menu-item-modal";
 import { MenuNav } from "./menu-nav";
@@ -49,7 +51,37 @@ function MenuView({
 }: MenuScreenProps & { style: CSSProperties }) {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(
+    categories[0]?.id ?? ""
+  );
   const { addItem } = useCart();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]?.target?.id) {
+          setActiveCategory(visible[0].target.id);
+        }
+      },
+      {
+        rootMargin: "-40% 0px -45% 0px",
+        threshold: [0.25, 0.5, 0.75],
+      }
+    );
+
+    const sections = categories
+      .map((category) => document.getElementById(category.id))
+      .filter((section): section is Element => Boolean(section));
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [categories]);
 
   return (
     <div className="min-h-screen bg-background text-foreground" style={style}>
@@ -61,7 +93,7 @@ function MenuView({
           </span>
         </div>
       </aside>
-      <MenuNav categories={categories} />
+      <MenuNav categories={categories} activeCategory={activeCategory} />
       <div className="mx-auto w-full max-w-5xl px-6 pb-32 pt-8">
         <MenuHeader store={store} />
         <div className="grid gap-12">
@@ -74,8 +106,14 @@ function MenuView({
           ))}
         </div>
       </div>
-      <CartBar onReview={() => setReviewOpen(true)} />
-      <CartButton onClick={() => setReviewOpen(true)} />
+      <CartBar
+        onReview={() => setReviewOpen(true)}
+        isReviewOpen={reviewOpen}
+      />
+      <CartButton
+        onClick={() => setReviewOpen(true)}
+        isOpen={reviewOpen}
+      />
       {selectedItem ? (
         <MenuItemModal
           item={selectedItem}
@@ -83,7 +121,7 @@ function MenuView({
           onAdd={(item, quantity, notes) => addItem(item, quantity, notes)}
         />
       ) : null}
-      <CartReviewModal
+      <CartSheet
         open={reviewOpen}
         onClose={() => setReviewOpen(false)}
         store={store}
