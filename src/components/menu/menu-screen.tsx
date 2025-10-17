@@ -54,9 +54,9 @@ function MenuView({
     <div className="min-h-screen bg-background text-foreground" style={style}>
       <aside className="border-b border-border/70 bg-secondary/60">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-6 py-3 text-xs text-muted-foreground">
-          <span>Pickup from {store.address}</span>
+          <span>Dining at {store.address}</span>
           <span className="rounded-full border border-border px-3 py-1 font-semibold uppercase tracking-[0.25em] text-primary">
-            Order Pickup
+            Order Now
           </span>
         </div>
       </aside>
