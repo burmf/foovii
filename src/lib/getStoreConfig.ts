@@ -15,3 +15,11 @@ export async function listStores(): Promise<string[]> {
   const files = await fs.readdir(storesDir);
   return files.filter((file) => file.endsWith(".json")).map((file) => file.replace(/\.json$/, ""));
 }
+
+export async function getAllStoreConfigs(): Promise<StoreConfig[]> {
+  const slugs = await listStores();
+  const configs = await Promise.all(
+    slugs.map(async (slug) => getStoreConfig(slug).catch(() => null))
+  );
+  return configs.filter((config): config is StoreConfig => Boolean(config));
+}
