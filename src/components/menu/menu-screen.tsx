@@ -55,29 +55,52 @@ function MenuView({
   const { addItem } = useCart();
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]?.target?.id) {
-          setActiveCategory(visible[0].target.id);
-        }
-      },
-      {
-        rootMargin: "-40% 0px -45% 0px",
-        threshold: [0.25, 0.5, 0.75],
-      }
-    );
-
     const sections = categories
       .map((category) => document.getElementById(category.id))
       .filter((section): section is HTMLElement => section instanceof HTMLElement);
 
-    sections.forEach((section) => observer.observe(section));
+    if (sections.length === 0) {
+      return;
+    }
+
+    let frameId: number | null = null;
+
+    const updateActiveCategory = () => {
+      frameId = null;
+      const checkpoint = window.innerHeight * 0.28;
+      let nextActive = sections[0].id;
+
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= checkpoint && rect.bottom >= checkpoint) {
+          nextActive = section.id;
+          break;
+        }
+        if (rect.top > checkpoint) {
+          break;
+        }
+      }
+
+      setActiveCategory((current) => (current === nextActive ? current : nextActive));
+    };
+
+    updateActiveCategory();
+
+    const scheduleUpdate = () => {
+      if (frameId === null) {
+        frameId = window.requestAnimationFrame(updateActiveCategory);
+      }
+    };
+
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
 
     return () => {
-      observer.disconnect();
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
     };
   }, [categories]);
 
