@@ -7,3 +7,4 @@ export * from "./cart-bar";
 export * from "./cart-review-modal";
 export * from "./menu-item-modal";
 export * from "./menu-screen";
+export * from "./cart-button";

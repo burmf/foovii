@@ -6,6 +6,7 @@ import type { MenuCategory, MenuItem, StoreConfig } from "@/lib/types";
 
 import { CartBar } from "./cart-bar";
 import { CartProvider, useCart } from "./cart-context";
+import { CartButton } from "./cart-button";
 import { CartReviewModal } from "./cart-review-modal";
 import { MenuHeader } from "./menu-header";
 import { MenuItemModal } from "./menu-item-modal";
@@ -74,6 +75,7 @@ function MenuView({
         </div>
       </div>
       <CartBar onReview={() => setReviewOpen(true)} />
+      <CartButton onClick={() => setReviewOpen(true)} />
       {selectedItem ? (
         <MenuItemModal
           item={selectedItem}
