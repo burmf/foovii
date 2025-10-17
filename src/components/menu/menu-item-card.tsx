@@ -15,11 +15,20 @@ export function MenuItemCard({
   onSelect,
 }: MenuItemCardProps) {
   return (
-    <article
+    <button
       className={cn(
-        "group grid grid-cols-[minmax(0,1fr)_auto] gap-4 rounded-2xl border border-border/80 bg-card/80 p-4 shadow-sm transition hover:border-primary/70 hover:shadow-md",
+        "group grid w-full grid-cols-[minmax(0,1fr)_auto] gap-4 rounded-2xl border border-border/80 bg-card/80 p-4 text-left shadow-sm transition hover:border-primary/70 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-primary/30",
         className
       )}
+      onClick={() => onSelect?.(item)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect?.(item);
+        }
+      }}
+      type="button"
+      aria-label={`View ${item.name}`}
     >
       <div className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
@@ -46,18 +55,9 @@ export function MenuItemCard({
         ) : null}
       </div>
       <div className="flex flex-col items-end gap-3">
-        <div className="flex items-center gap-3">
-          <p className="text-base font-semibold text-primary">
-            {formatCurrency(item.price, item.currency ?? "AUD")}
-          </p>
-          <button
-            type="button"
-            onClick={() => onSelect?.(item)}
-            className="rounded-full border border-primary px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary transition hover:bg-primary hover:text-primary-foreground"
-          >
-            Add
-          </button>
-        </div>
+        <p className="text-base font-semibold text-primary">
+          {formatCurrency(item.price, item.currency ?? "AUD")}
+        </p>
         <div className="relative aspect-square h-24 w-24 overflow-hidden rounded-xl bg-secondary">
           {item.image ? (
             <Image
@@ -73,6 +73,6 @@ export function MenuItemCard({
           )}
         </div>
       </div>
-    </article>
+    </button>
   );
 }

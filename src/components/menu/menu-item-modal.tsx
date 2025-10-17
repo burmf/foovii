@@ -16,8 +16,17 @@ export function MenuItemModal({ item, onClose, onAdd }: MenuItemModalProps) {
   const [notes, setNotes] = useState("");
 
   return (
-    <div className="fixed inset-0 z-20 flex items-end justify-center bg-black/40 px-4 py-6 sm:items-center">
-      <div className="w-full max-w-lg rounded-3xl bg-background shadow-lg">
+    <div
+      className="fixed inset-0 z-20 flex items-end justify-center bg-black/40 px-4 py-6 sm:items-center"
+      onClick={onClose}
+      role="presentation"
+    >
+      <div
+        className="w-full max-w-lg rounded-3xl bg-background shadow-lg"
+        onClick={(event) => event.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+      >
         <header className="flex items-start justify-between gap-4 border-b border-border px-6 py-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
