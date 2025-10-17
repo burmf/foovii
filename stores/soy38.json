@@ -1,0 +1,12 @@
+{
+  "slug": "soy38",
+  "displayName": "Soy38 Pilot",
+  "address": "TBD",
+  "theme": {
+    "primary": "#0E4D64",
+    "secondary": "#F1F5F9",
+    "accent": "#38BDF8",
+    "background": "#FFFFFF"
+  },
+  "categories": []
+}

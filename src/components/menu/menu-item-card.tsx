@@ -1,0 +1,78 @@
+import Image from "next/image";
+
+import type { MenuItem } from "@/lib/types";
+import { cn, formatCurrency } from "@/lib/utils";
+
+interface MenuItemCardProps {
+  item: MenuItem;
+  className?: string;
+  onSelect?: (item: MenuItem) => void;
+}
+
+export function MenuItemCard({
+  item,
+  className,
+  onSelect,
+}: MenuItemCardProps) {
+  return (
+    <article
+      className={cn(
+        "group grid grid-cols-[minmax(0,1fr)_auto] gap-4 rounded-2xl border border-border/80 bg-card/80 p-4 shadow-sm transition hover:border-primary/70 hover:shadow-md",
+        className
+      )}
+    >
+      <div className="flex flex-col gap-3">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-lg font-semibold text-foreground">
+            {item.name}
+          </h3>
+        </div>
+        {item.description ? (
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {item.description}
+          </p>
+        ) : null}
+        {item.tags?.length ? (
+          <div className="flex flex-wrap gap-1">
+            {item.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border border-border px-2 py-0.5 text-[11px] uppercase tracking-wide text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
+      </div>
+      <div className="flex flex-col items-end gap-3">
+        <div className="flex items-center gap-3">
+          <p className="text-base font-semibold text-primary">
+            {formatCurrency(item.price, item.currency ?? "AUD")}
+          </p>
+          <button
+            type="button"
+            onClick={() => onSelect?.(item)}
+            className="rounded-full border border-primary px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary transition hover:bg-primary hover:text-primary-foreground"
+          >
+            Add
+          </button>
+        </div>
+        <div className="relative aspect-square h-24 w-24 overflow-hidden rounded-xl bg-secondary">
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt={item.name}
+              fill
+              className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-xs uppercase tracking-wide text-muted-foreground">
+              Image TBD
+            </div>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}

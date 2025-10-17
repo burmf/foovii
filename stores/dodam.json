@@ -1,0 +1,72 @@
+{
+  "slug": "dodam",
+  "displayName": "Dodam Melbourne",
+  "address": "Retail 2, 7 Bluestone Way, Melbourne",
+  "theme": {
+    "primary": "#910018",
+    "secondary": "#F5E6D1",
+    "accent": "#FFD166",
+    "background": "#FFFFFF"
+  },
+  "categories": [
+    {
+      "id": "all-day",
+      "name": "All Day Menu",
+      "items": [
+        { "id": "plain-chicken", "name": "Boneless Whole Chicken – Plain", "description": "Crispy golden boneless chicken served with pickled radish.", "price": 35 },
+        { "id": "sweet-spicy-chicken", "name": "Boneless Whole Chicken – Sweet & Spicy", "description": "Bold sweet & spicy glaze with pickled radish.", "price": 36 },
+        { "id": "soy-garlic-chicken", "name": "Boneless Whole Chicken – Soy Garlic", "description": "Savory soy garlic glaze with pickled radish.", "price": 36 },
+        { "id": "snow-cheese-chicken", "name": "Boneless Whole Chicken – Snow Cheese", "description": "Snow cheese powder dusted chicken with pickled radish.", "price": 36 },
+        { "id": "half-half", "name": "Boneless Half & Half Chicken", "description": "Choose two flavors, served with pickled radish.", "price": 38 },
+        { "id": "chips", "name": "Chips", "price": 8 },
+        { "id": "veg-mandu", "name": "Vegetable Mandu (Vegetarian)", "description": "Steamed dumplings with tofu and seasonal vegetables.", "price": 22 },
+        { "id": "meat-mandu", "name": "Meat Mandu", "description": "Steamed pork dumplings with tofu and vegetables.", "price": 25 },
+        { "id": "potato-jeon", "name": "Potato Jeon (Vegetarian)", "description": "Crispy shredded potato pancake with gochujang tomato paste.", "price": 24 },
+        { "id": "kimchi-jeon", "name": "Kimchi Jeon (Vegetarian)", "description": "Fermented kimchi pancake pan-fried until crisp.", "price": 26 },
+        { "id": "seafood-jeon", "name": "Seafood Jeon", "description": "Pancake with prawns, calamari, mussels, clams, spring onion.", "price": 34 },
+        { "id": "rice", "name": "Rice", "price": 4 }
+      ]
+    },
+    {
+      "id": "lunch",
+      "name": "Lunch",
+      "items": [
+        { "id": "bibimbap-veg", "name": "Cupbap – Bibimbap (Vegetarian)", "description": "Seasonal vegetables, buttered gochujang, sesame oil, fried egg.", "price": 18 },
+        { "id": "bibimbap-beef", "name": "Cupbap – Beef Bibimbap", "description": "Soy-marinated beef, seasonal vegetables, buttered gochujang, fried egg.", "price": 22 },
+        { "id": "bibimbap-pork", "name": "Cupbap – Pork Bibimbap", "description": "Spicy pork with vegetables, buttered gochujang, fried egg.", "price": 22 },
+        { "id": "tteok-galbi", "name": "Cupbap – Tteok Galbi", "description": "Soy-marinated beef patty with rice and grilled vegetables.", "price": 22 },
+        { "id": "bulgogi", "name": "Cupbap – Beef Bulgogi", "description": "Soy stir-fried beef with cabbage, onion, wombok, mushroom.", "price": 18 },
+        { "id": "spicy-pork", "name": "Cupbap – Spicy Pork", "description": "Gochujang stir-fried pork with cabbage, onion, wombok.", "price": 18 },
+        { "id": "lunch-rice", "name": "Rice", "price": 4 }
+      ]
+    },
+    {
+      "id": "dinner",
+      "name": "Dinner",
+      "items": [
+        { "id": "sotteok", "name": "Sotteok Sotteok (1 pc)", "description": "Sausage and rice cake skewer with sweet & spicy glaze.", "price": 6.5 },
+        { "id": "soy-cucumber-beef", "name": "Soy Cucumbers – Beef", "description": "Soy-marinated cucumber stir-fried with minced beef.", "price": 14 },
+        { "id": "soy-cucumber-mushroom", "name": "Soy Cucumbers – Mushroom (Vegetarian)", "description": "Soy-marinated cucumber stir-fried with mushrooms.", "price": 14 },
+        { "id": "little-gem", "name": "Little Gem Salad (Vegan)", "price": 13 },
+        { "id": "kimchi-fried-rice", "name": "Kimchi-Fried Rice (Vegetarian)", "description": "Spicy, tangy kimchi fried rice with egg.", "price": 22 },
+        { "id": "stir-fry-veggies", "name": "Stir-Fried Vegetables (Vegan)", "description": "Mixed vegetables stir-fried in a light vegan sauce.", "price": 25 },
+        { "id": "dinner-spicy-pork", "name": "Spicy Pork", "description": "Gochujang stir-fried pork with cabbage and wombok.", "price": 26 },
+        { "id": "dinner-bulgogi", "name": "Beef Bulgogi", "description": "Soy stir-fried beef with cabbage, wombok, mushroom.", "price": 28 },
+        { "id": "corn-rib", "name": "Cheese Corn Rib Twigim (4 pcs, Vegetarian)", "description": "Crispy corn ribs with shaved Grana Padano.", "price": 14 },
+        { "id": "eggplant", "name": "Eggplant Twigim (Vegetarian)", "description": "Deep-fried half-split eggplant with dipping sauce.", "price": 20 },
+        { "id": "dinner-rice", "name": "Rice", "price": 4 }
+      ]
+    },
+    {
+      "id": "drinks",
+      "name": "Drinks",
+      "items": [
+        { "id": "coke", "name": "Coke", "price": 4 },
+        { "id": "coke-zero", "name": "Coke Zero", "price": 4 },
+        { "id": "sprite", "name": "Sprite", "price": 4 },
+        { "id": "bong-bong", "name": "Bong-Bong", "price": 5 },
+        { "id": "crushed-pear", "name": "Crushed Pear", "price": 5 }
+      ]
+    }
+  ]
+}
