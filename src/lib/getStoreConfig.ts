@@ -2,13 +2,15 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 import type { StoreConfig } from "@/lib/types";
+import { applySupabaseMenu } from "@/lib/supabase-menu";
 
 const storesDir = path.join(process.cwd(), "stores");
 
 export async function getStoreConfig(slug: string): Promise<StoreConfig> {
   const filePath = path.join(storesDir, `${slug}.json`);
   const file = await fs.readFile(filePath, "utf-8");
-  return JSON.parse(file) as StoreConfig;
+  const store = JSON.parse(file) as StoreConfig;
+  return applySupabaseMenu(store);
 }
 
 export async function listStores(): Promise<string[]> {

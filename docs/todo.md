@@ -55,7 +55,7 @@
 - [x] `stores/{slug}.json` を `getStoreConfig(slug)` で読み込み
 - [x] Header やテーマカラーへ反映
 - [x] `/menu/dodam`・`/menu/soy38` などの URL パターンを確認
-- [ ] Phase 2 で Supabase DB へ移行予定（現段階はローカル JSON）
+- [ ] Supabase DB へ移行（`menu_categories` / `menu_items` と Storage バケット整備）
 
 ## 🧑‍🍳 4. `/staff/`（店舗スタッフ用）
 - [ ] カンバン UI（New / In Progress / Ready / Served）を実装

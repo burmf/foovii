@@ -36,3 +36,4 @@
 - Never commit `.env.local`; share secrets via the secure vault.
 - Enable Supabase RLS before launch and document temporary bypass flags in `SECURITY.md`.
 - Validate menu JSON uploads with shared Zod schemas to prevent tenant cross-talk.
+- Copy `config/.env.example` to `.env.local` and populate `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`; store real keys in the secret manager, not in Git.
