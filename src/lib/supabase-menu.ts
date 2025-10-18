@@ -59,7 +59,7 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
 
   try {
     const { data, error } = await supabase
-      .from<SupabaseMenuRow>("menu_items")
+      .from("menu_items")
       .select(
         "id, store_slug, name, description, price_cents, currency, image_path, category_name, category_slug, sort_order, tags, published"
       )
@@ -77,9 +77,10 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
       return store;
     }
 
+    const rows = data as SupabaseMenuRow[];
     const categoryMap = new Map<string, MenuCategory>();
 
-    for (const row of data) {
+    for (const row of rows) {
       if (!row.name) continue;
       const categoryKey = row.category_name?.trim() || FALLBACK_CATEGORY;
       if (!categoryMap.has(categoryKey)) {

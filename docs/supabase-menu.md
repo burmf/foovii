@@ -78,3 +78,12 @@ SUPABASE_SERVICE_ROLE_KEY=...
 (Keep service keys out of the frontend bundle.)
 
 Once populated, Foovii will automatically pull Supabase data at build/runtime; local JSON is only used as a fallback.
+
+## SQL Helper
+`supabase/sql/menu-schema.sql` contains the full DDL (tables, indexes, RLS policies, updated-at trigger). Run it once in the Supabase SQL editor or via the CLI:
+
+```bash
+supabase db remote commit --file supabase/sql/menu-schema.sql
+```
+
+Adjust currency defaults or indexes as needed for additional tenants.
