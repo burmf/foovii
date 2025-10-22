@@ -43,7 +43,7 @@ Add an index on `(store_slug, category_id, sort_order)` and a partial index enfo
 - Store the public URL or storage path in `menu_items.image_path`.
 
 ## Seeding Data from Local JSON
-- Ensure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` are configured (see `config/.env.example`).
+- Ensure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and `SUPABASE_STORAGE_BUCKET` are configured (see `config/.env.example`).
 - Run `pnpm install` once to ensure the `tsx` runner is available.
 - Execute the sync script with the store slug (defaults to `dodam`):
 
@@ -52,6 +52,13 @@ Add an index on `(store_slug, category_id, sort_order)` and a partial index enfo
   ```
 
   The script reads `stores/<slug>.json`, deterministically generates UUIDs, and upserts data into `menu_categories` / `menu_items`.
+- Add `--upload-assets` to push local images from `public/menu-images/<slug>` to Supabase Storage and automatically store their public URLs in `image_path`:
+
+  ```bash
+  pnpm sync:supabase dodam --upload-assets
+  ```
+
+  The bucket is created automatically if it does not exist; ensure the service role key has Storage permissions.
 - Re-run the script whenever the local fixtures change to keep Supabase in sync.
 
 ## Row Level Security (RLS)

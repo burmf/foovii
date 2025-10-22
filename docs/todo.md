@@ -58,6 +58,7 @@
 - [x] `/menu/dodam`・`/menu/soy38` などの URL パターンを確認
 - [ ] Supabase DB へ移行（`menu_categories` / `menu_items` と Storage バケット整備）
 - [x] Supabase メニュー同期スクリプト（`scripts/sync-supabase-menu.ts`）を追加
+- [x] 同期スクリプトで `--upload-assets` オプションにより Storage へ画像をアップロード可能にする
 - [x] Supabase メニュー取得時にローカル画像メタデータへフォールバック
 - [x] Supabase スキーマ DDL（`supabase/sql/menu-schema.sql`）のポリシー／トリガーを整理
 

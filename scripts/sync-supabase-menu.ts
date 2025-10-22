@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 import { createClient } from "@supabase/supabase-js";
+import mime from "mime";
 
 type StoreFile = {
   slug: string;
@@ -50,14 +51,19 @@ type UpsertItem = {
 const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? "menu-assets";
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error("Missing Supabase credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY before running this script.");
+  console.error(
+    "Missing Supabase credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY before running this script."
+  );
   process.exit(1);
 }
 
-const [, , inputSlug] = process.argv;
-const storeSlug = inputSlug ?? "dodam";
+const args = process.argv.slice(2);
+const slugArg = args.find((arg) => !arg.startsWith("--"));
+const storeSlug = slugArg ?? "dodam";
+const shouldUploadAssets = args.includes("--upload-assets");
 
 async function main() {
   const store = await loadStore(storeSlug);
@@ -84,7 +90,12 @@ async function main() {
     categoryIdBySlug.set(category.slug, category.id);
   });
 
-  const itemsPayload = buildItemsPayload(store, categoryIdBySlug);
+  const itemsPayload = await buildItemsPayload({
+    store,
+    categoryIdBySlug,
+    supabase,
+    uploadAssets: shouldUploadAssets,
+  });
 
   const { error: itemsError, count: itemCount } = await supabase
     .from("menu_items")
@@ -94,7 +105,12 @@ async function main() {
     throw itemsError;
   }
 
-  console.log(`Synced ${categoriesPayload.length} categories and ${itemCount ?? itemsPayload.length} menu items for store "${store.slug}".`);
+  console.log(
+    `Synced ${categoriesPayload.length} categories and ${itemCount ?? itemsPayload.length} menu items for store "${store.slug}".`
+  );
+  if (shouldUploadAssets) {
+    console.log(`Assets uploaded to bucket "${STORAGE_BUCKET}".`);
+  }
 }
 
 async function loadStore(slug: string): Promise<StoreFile> {
@@ -115,13 +131,36 @@ function buildCategoriesPayload(store: StoreFile): UpsertCategory[] {
   }));
 }
 
-function buildItemsPayload(store: StoreFile, categoryIdBySlug: Map<string, string>): UpsertItem[] {
+async function buildItemsPayload(params: {
+  store: StoreFile;
+  categoryIdBySlug: Map<string, string>;
+  supabase: ReturnType<typeof createClient>;
+  uploadAssets: boolean;
+}): Promise<UpsertItem[]> {
+  const { store, categoryIdBySlug, supabase, uploadAssets } = params;
   const payload: UpsertItem[] = [];
+  const assetCache = new Map<string, string>();
 
-  store.categories.forEach((category) => {
-    const categoryId = categoryIdBySlug.get(category.id) ?? deterministicUuid(`${store.slug}:category:${category.id}`);
+  if (uploadAssets) {
+    await ensureBucket(supabase, STORAGE_BUCKET);
+  }
 
-    category.items.forEach((item, itemIndex) => {
+  for (const category of store.categories) {
+    const categoryId =
+      categoryIdBySlug.get(category.id) ??
+      deterministicUuid(`${store.slug}:category:${category.id}`);
+
+    for (const [itemIndex, item] of category.items.entries()) {
+      const imagePath = item.image
+        ? await prepareAssetPath({
+            itemImagePath: item.image,
+            storeSlug: store.slug,
+            supabase,
+            uploadAssets,
+            cache: assetCache,
+          })
+        : null;
+
       payload.push({
         id: deterministicUuid(`${store.slug}:item:${item.id}`),
         store_slug: store.slug,
@@ -130,13 +169,13 @@ function buildItemsPayload(store: StoreFile, categoryIdBySlug: Map<string, strin
         description: item.description ?? null,
         price_cents: normalisePrice(item.price),
         currency: item.currency ?? "AUD",
-        image_path: item.image ?? null,
+        image_path: imagePath,
         tags: item.tags ?? null,
         sort_order: itemIndex,
         published: true,
       });
-    });
-  });
+    }
+  }
 
   return payload;
 }
@@ -155,6 +194,85 @@ function normalisePrice(price: number): number {
     return 0;
   }
   return Math.round(price * 100);
+}
+
+async function ensureBucket(
+  supabase: ReturnType<typeof createClient>,
+  bucketName: string
+) {
+  const { data: bucketList, error } = await supabase.storage.listBuckets();
+  if (error) {
+    throw error;
+  }
+
+  const exists = bucketList?.some((bucket) => bucket.name === bucketName);
+  if (!exists) {
+    const { error: createError } = await supabase.storage.createBucket(bucketName, {
+      public: true,
+      fileSizeLimit: "50mb",
+    });
+    if (createError) {
+      throw createError;
+    }
+    console.log(`Created storage bucket "${bucketName}".`);
+  }
+}
+
+async function prepareAssetPath(params: {
+  itemImagePath: string;
+  storeSlug: string;
+  supabase: ReturnType<typeof createClient>;
+  uploadAssets: boolean;
+  cache: Map<string, string>;
+}): Promise<string> {
+  const { itemImagePath, storeSlug, supabase, uploadAssets, cache } = params;
+  const normalised = normaliseImagePath(itemImagePath);
+
+  if (!normalised) {
+    return itemImagePath;
+  }
+
+  if (!uploadAssets) {
+    return normalised;
+  }
+
+  if (cache.has(normalised)) {
+    return cache.get(normalised)!;
+  }
+
+  const relativePath = normalised.replace(/^\//, "");
+  const absolutePath = path.join(process.cwd(), relativePath.startsWith("public/") ? relativePath : path.join("public", relativePath));
+  const fileBuffer = await fs.readFile(absolutePath);
+  const contentType = mime.getType(absolutePath) ?? "application/octet-stream";
+
+  const targetPath = `${storeSlug}/${path.basename(relativePath)}`;
+  const storage = supabase.storage.from(STORAGE_BUCKET);
+  const { error: uploadError } = await storage.upload(targetPath, fileBuffer, {
+    contentType,
+    upsert: true,
+  });
+
+  if (uploadError && uploadError.message && !uploadError.message.includes("Duplicate")) {
+    throw uploadError;
+  }
+
+  const {
+    data: { publicUrl },
+  } = storage.getPublicUrl(targetPath);
+
+  cache.set(normalised, publicUrl);
+  return publicUrl;
+}
+
+function normaliseImagePath(pathValue: string | null | undefined): string | null {
+  if (!pathValue) return null;
+  if (pathValue.startsWith("http://") || pathValue.startsWith("https://")) {
+    return pathValue;
+  }
+  if (pathValue.startsWith("/")) {
+    return pathValue;
+  }
+  return `/${pathValue}`;
 }
 
 main().catch((error) => {
