@@ -62,14 +62,14 @@
 - [x] Supabase スキーマ DDL（`supabase/sql/menu-schema.sql`）のポリシー／トリガーを整理
 
 ## 🧑‍🍳 4. `/staff/`（店舗スタッフ用）
-- [ ] カンバン UI（New / In Progress / Ready / Served）を実装
-- [ ] ダミー注文データを 3〜5 件生成
-- [ ] カラム内操作でステータス変更（クリック式）を実装
+- [x] カンバン UI（New / In Progress / Ready / Served）を実装
+- [x] ダミー注文データを 3〜5 件生成
+- [x] カラム内操作でステータス変更（クリック式）を実装
 - [ ] Phase 2 で Supabase Realtime を導入予定
 
 ## 📊 5. `/manager/`（店舗マネージャー用）
-- [ ] KPI カード（Revenue, Orders, Avg Order Value）を静的値で表示
-- [ ] Recharts で時間別オーダーグラフを描画
+- [x] KPI カード（Revenue, Orders, Avg Order Value）を静的値で表示
+- [x] Recharts で時間別オーダーグラフを描画
 - [ ] Phase 2 で Supabase 集計データへ接続
 
 ## ⚙️ 6. `/api/orders/`（MVP モック）
