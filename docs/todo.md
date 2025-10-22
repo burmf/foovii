@@ -46,6 +46,7 @@
 - [x] ページレイアウト構築（Header / Category bar / Menu grid）
 - [x] `data.ts` にダミーメニューを実装 ※実際は `stores/dodam.json` / `stores/soy38.json` で管理
 - [x] `MenuItemCard.tsx`（写真・説明・価格・Add ボタン）作成
+- [x] DODAM メニューにローカル画像パスを紐付け
 - [x] 下部固定 `CartBar` コンポーネントを追加
 - [x] カート状態を `useContext` で管理し数量更新を可能にする
 - [x] Add クリック時に商品詳細モーダル（Dialog）を表示
