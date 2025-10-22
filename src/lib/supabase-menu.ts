@@ -58,6 +58,13 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
   }
 
   try {
+    const originalItems = new Map<string, MenuItem>();
+    for (const category of store.categories) {
+      for (const item of category.items) {
+        originalItems.set(item.id, item);
+      }
+    }
+
     const { data, error } = await supabase
       .from("menu_items")
       .select(
@@ -92,16 +99,20 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
       }
 
       const category = categoryMap.get(categoryKey)!;
-      const price = typeof row.price_cents === "number" ? row.price_cents / 100 : 0;
+      const fallbackItem = originalItems.get(row.id);
+      const price =
+        typeof row.price_cents === "number"
+          ? row.price_cents / 100
+          : fallbackItem?.price ?? 0;
 
       const item: MenuItem = {
         id: row.id,
-        name: row.name,
-        description: row.description ?? undefined,
+        name: row.name || fallbackItem?.name || "Unnamed Item",
+        description: row.description ?? fallbackItem?.description ?? undefined,
         price,
-        currency: row.currency ?? "AUD",
-        tags: row.tags ?? undefined,
-        image: normaliseImagePath(row.image_path),
+        currency: row.currency ?? fallbackItem?.currency ?? "AUD",
+        tags: row.tags ?? fallbackItem?.tags ?? undefined,
+        image: normaliseImagePath(row.image_path) ?? fallbackItem?.image,
       };
 
       category.items.push(item);
