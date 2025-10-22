@@ -59,6 +59,7 @@
 - [ ] Supabase DB へ移行（`menu_categories` / `menu_items` と Storage バケット整備）
 - [x] Supabase メニュー同期スクリプト（`scripts/sync-supabase-menu.ts`）を追加
 - [x] Supabase メニュー取得時にローカル画像メタデータへフォールバック
+- [x] Supabase スキーマ DDL（`supabase/sql/menu-schema.sql`）のポリシー／トリガーを整理
 
 ## 🧑‍🍳 4. `/staff/`（店舗スタッフ用）
 - [ ] カンバン UI（New / In Progress / Ready / Served）を実装

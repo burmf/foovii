@@ -1,5 +1,5 @@
 -- Supabase schema for Foovii menu management
--- Run these statements in the Supabase SQL editor or supabase CLI.
+-- Run these statements in the Supabase SQL editor or via the CLI.
 
 create table if not exists public.menu_categories (
   id uuid primary key default gen_random_uuid(),
@@ -43,15 +43,15 @@ create index if not exists menu_items_store_slug_idx
 alter table public.menu_categories enable row level security;
 alter table public.menu_items enable row level security;
 
-create policy if not exists "menu_categories_public_select" on public.menu_categories
-  for select
-  using (published);
+DROP POLICY IF EXISTS "menu_categories_public_select" ON public.menu_categories;
+CREATE POLICY "menu_categories_public_select" ON public.menu_categories
+  FOR SELECT USING (published);
 
-create policy if not exists "menu_items_public_select" on public.menu_items
-  for select
-  using (published);
+DROP POLICY IF EXISTS "menu_items_public_select" ON public.menu_items;
+CREATE POLICY "menu_items_public_select" ON public.menu_items
+  FOR SELECT USING (published);
 
--- Optional helper trigger to keep categories updated_at current.
+-- Updated-at trigger
 create or replace function public.touch_updated_at()
 returns trigger as $$
 begin
@@ -60,11 +60,13 @@ begin
 end;
 $$ language plpgsql;
 
+drop trigger if exists menu_categories_touch_updated_at on public.menu_categories;
 create trigger menu_categories_touch_updated_at
   before update on public.menu_categories
   for each row
   execute function public.touch_updated_at();
 
+drop trigger if exists menu_items_touch_updated_at on public.menu_items;
 create trigger menu_items_touch_updated_at
   before update on public.menu_items
   for each row
