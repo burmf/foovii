@@ -1,39 +1,38 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- As of Oct 17 2025, `docs/yoken` holds the Foovii SRS; treat it as the scope contract and attach relevant section links in PRs.
-- Scaffold apps under `apps/menu/` (guest ordering) and `apps/staff/` (operations dashboard) with features in `src/modules/`.
-- Share domain logic in `packages/core/` and reusable UI in `packages/ui/`; keep assets in `public/assets/` and e2e suites in `tests/`.
-- Commit environment samples to `config/.env.example` and tenant themes to `config/stores/*.json`.
+- `src/app/` contains the three Next.js routes we ship today: `menu/[storeSlug]`, `staff`, `manager`, and the `/api/orders` mock.
+- Guest ordering UI lives under `src/components/menu/`; staff and manager dashboards live in `src/components/staff/` と `src/components/manager/`。
+- Tenant fixtures stay in `stores/*.json`; Supabase schema / SQL lives in `supabase/sql/`; docs are grouped inside `docs/` (SRS is `docs/yoken.md`).
+- Shared helpers: `src/lib/` (types, Supabase menu loader, Stripe placeholder) and `config/.env.example` for environment samples.
 
 ## Build, Test, and Development Commands
-- `pnpm install` — install workspaces and hooks; run after syncing with `main`.
-- `pnpm dev --filter apps/menu` (or `apps/staff`) — launch the respective Next.js dev server with hot reload.
-- `pnpm build` — create production bundles, blocking on lint or type failures.
-- `pnpm lint --fix` — apply ESLint + Prettier rules and format the workspace.
-- `pnpm test` — run Vitest suites; append `--runInBand` when chasing flakes.
-- `pnpm exec playwright test` — exercise guest checkout and staff status transitions end to end.
+- `pnpm install` — resolve dependencies.
+- `pnpm dev` — launch the combined Next.js dev server (menu + dashboards)。
+- `pnpm build` — production build with lint + type checks.
+- `pnpm lint` / `pnpm format` / `pnpm format:write` — lint or format the codebase (Prettier は `.ts/.tsx/.json/.md` を対象)。
+- `pnpm sync:supabase dodam --upload-assets` — stores JSON → Supabase への同期 + 画像アップロード。
+- Playwright / Vitest などの追加テストは未整備; 導入時は `tests/` ディレクトリに配置。
 
 ## Coding Style & Naming Conventions
-- Use TypeScript with 2-space indentation, semicolons, single quotes in TS/JS, double quotes in JSON.
-- Enforce ESLint (`@next/eslint-plugin-next`) and Prettier defaults; never bypass lint on commit.
-- Name components `PascalCase.tsx`, hooks/utilities `camelCase.ts`, and route segments kebab-case.
-- Group Tailwind classes by layout → spacing → color; centralize tokens inside `packages/ui/theme.ts`.
-- Keep all code comments, documentation, and UI copy in English to stay consistent across teams and tenants.
+- TypeScript + Tailwind。2-space indent, semicolons ON, double quotes enforced by Prettier。
+- Component filesは `PascalCase.tsx`; utility / hooks は `camelCase.ts`; route セグメントは Next.js 規約どおり。
+- Tailwind クラスはレイアウト → スペース → 色の順で並べること。テーマカラーは `store.theme` を CSS variables として注入。
+- UI文言は英語、ドキュメント（リポジトリ内説明）も英語。コミットメッセージは英語 + Conventional Commits。
 
 ## Testing Guidelines
-- Co-locate Vitest + Testing Library specs in `__tests__` folders beside feature modules.
-- Keep Playwright suites in `tests/e2e`; automate guest happy path and staff fulfilment loop.
-- Maintain ≥80% line coverage on critical modules (`order`, `payments`, `tenant-config`) and publish coverage from CI.
+- まだ自動テストは未導入。今後追加する際は UI コンポーネント横に `__tests__` を作成し、Playwright は `tests/e2e/` に配置する方針。
+- `/api/orders` はモックなのでネットワークテストより UI レベルの確認を重視。
+- Supabase と連携するコードは環境変数が無い状態でもフォールバックで動作することを確認すること。
 
 ## Commit & Pull Request Guidelines
-- Follow Conventional Commits (`feat:`, `fix:`, `chore:`); keep subjects ≤72 chars and add context in the body when needed.
-- Rebase on `main` before pushing; avoid merge commits.
-- Each PR must outline the problem, list verification commands, and attach UI evidence when visuals change; mention tenant fixtures touched.
-- Request a domain reviewer plus a cross-team reviewer and wait for lint, test, and e2e checks to pass.
+- Conventional Commits (`feat:`, `fix:`, `chore:`...) を維持。件名 72 文字以下。
+- 変更内容 / 動作確認コマンド / 影響ルート（例: `/menu/dodam`）を PR 説明に記載。
+- スクリーンショットや Loom は UI 改修時に添付。Supabase マイグレーションは適用手順も忘れずに追記。
+- `main` をリベース、CI（lint / build）をパスさせてからマージ。
 
 ## Environment & Security Notes
-- Never commit `.env.local`; share secrets via the secure vault.
-- Enable Supabase RLS before launch and document temporary bypass flags in `SECURITY.md`.
-- Validate menu JSON uploads with shared Zod schemas to prevent tenant cross-talk.
-- Copy `config/.env.example` to `.env.local` and populate `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`; store real keys in the secret manager, not in Git.
+- `.env.local` はコミット禁止。Supabase 鍵は secure vault 経由で共有。
+- `config/.env.example` をコピーし、`NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY` / `SUPABASE_STORAGE_BUCKET` をセット。
+- Supabase RLS は常に有効化しておき、テストのために RLS を無効化した場合は `docs/changelog.md` に記録。
+- 画像は `pnpm sync:supabase <slug> --upload-assets` で Storage へ同期し、Public URL が露出する点に留意（顧客向け URL の取り扱いに注意）。

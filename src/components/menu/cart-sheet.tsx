@@ -10,9 +10,11 @@ interface CartSheetProps {
   open: boolean;
   onClose: () => void;
   store: StoreConfig;
+  onOrderSuccess?: (orderId: string) => void;
+  onOrderError?: (message: string) => void;
 }
 
-export function CartSheet({ open, onClose, store }: CartSheetProps) {
+export function CartSheet({ open, onClose, store, onOrderSuccess, onOrderError }: CartSheetProps) {
   return (
     <AnimatePresence>
       {open ? (
@@ -33,7 +35,12 @@ export function CartSheet({ open, onClose, store }: CartSheetProps) {
             className="w-full max-w-xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <CartReviewPanel store={store} onClose={onClose} />
+            <CartReviewPanel
+              store={store}
+              onClose={onClose}
+              onOrderSuccess={onOrderSuccess}
+              onOrderError={onOrderError}
+            />
           </motion.div>
         </motion.div>
       ) : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { AnimatePresence } from "framer-motion";
 
 import type { MenuCategory, MenuItem, StoreConfig } from "@/lib/types";
 
@@ -12,6 +13,7 @@ import { MenuHeader } from "./menu-header";
 import { MenuItemModal } from "./menu-item-modal";
 import { MenuNav } from "./menu-nav";
 import { MenuSection } from "./menu-section";
+import { Toast } from "./toast";
 
 interface MenuScreenProps {
   store: StoreConfig;
@@ -52,7 +54,19 @@ function MenuView({
   const [activeCategory, setActiveCategory] = useState(
     categories[0]?.id ?? ""
   );
+  const [toast, setToast] = useState<
+    | { id: number; message: string; tone?: "success" | "error" }
+    | null
+  >(
+    null
+  );
   const { addItem } = useCart();
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(null), 3200);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
 
   useEffect(() => {
     const sections = categories
@@ -150,7 +164,31 @@ function MenuView({
         open={reviewOpen}
         onClose={() => setReviewOpen(false)}
         store={store}
+        onOrderSuccess={(orderId) =>
+          setToast({
+            id: Date.now(),
+            message: `Order #${orderId} confirmed`,
+            tone: "success",
+          })
+        }
+        onOrderError={(message) =>
+          setToast({
+            id: Date.now(),
+            message,
+            tone: "error",
+          })
+        }
       />
+      <AnimatePresence>
+        {toast ? (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            tone={toast.tone}
+            onDismiss={() => setToast(null)}
+          />
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

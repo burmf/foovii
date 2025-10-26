@@ -10,9 +10,11 @@ import { useCart } from "./cart-context";
 interface CartReviewPanelProps {
   onClose: () => void;
   store: StoreConfig;
+  onOrderSuccess?: (orderId: string) => void;
+  onOrderError?: (message: string) => void;
 }
 
-export function CartReviewPanel({ onClose, store }: CartReviewPanelProps) {
+export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }: CartReviewPanelProps) {
   const { lines, subtotal, totalQuantity, increment, decrement, remove, clear } =
     useCart();
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
@@ -44,13 +46,17 @@ export function CartReviewPanel({ onClose, store }: CartReviewPanelProps) {
         throw new Error("Failed to place order");
       }
 
+      const result = (await response.json()) as { orderId?: string };
       setStatus("success");
       setMessage("Order placed. Staff dashboard will receive the ticket.");
       clear();
+      onOrderSuccess?.(result.orderId ?? "mock");
+      onClose();
     } catch (error) {
       console.error(error);
       setStatus("error");
       setMessage("Could not place the order. Please try again.");
+      onOrderError?.("Could not place the order. Please try again.");
     }
   }
 

@@ -51,6 +51,7 @@
 - [x] カート状態を `useContext` で管理し数量更新を可能にする
 - [x] Add クリック時に商品詳細モーダル（Dialog）を表示
 - [x] `Place order` で `/api/orders` のモック API を呼び出す
+- [x] 注文完了時にトースト表示（成功/失敗フィードバック）
 
 ## 🧠 3. マルチテナント対応（MVP 範囲）
 - [x] `stores/{slug}.json` を `getStoreConfig(slug)` で読み込み
@@ -86,7 +87,7 @@
 - [ ] 実決済は Phase 2 で有効化
 
 ## 🧠 8. 非機能系設定
-- [ ] ESLint / Prettier を導入しフォーマッターを統一
+- [x] ESLint / Prettier を導入しフォーマッターを統一
 - [ ] `env.example` を作成（Phase 2 で鍵追加予定）
 - [ ] PWA 化の検討（Add to Home Screen 対応）
 - [ ] 画像圧縮と Lazy Load 設定で Lighthouse 指標を改善
