@@ -74,16 +74,15 @@
 - [ ] Phase 2 で Supabase 集計データへ接続
 
 ## ⚙️ 6. `/api/orders/`（MVP モック）
-- [ ] `POST` 受信時にペイロードをログ
-- [ ] 固定成功レスポンスを返却  
+- [x] `POST` 受信時にペイロードをログ
+- [x] 固定成功レスポンスを返却  
   ```json
   { "orderId": "mock123", "status": "ok" }
   ```
 - [ ] Phase 2 で Supabase `orders` テーブル保存に置き換え
 
 ## 💳 7. Stripe（Phase 2 プレースホルダ）
-- [ ] `lib/stripe.ts` を作成し SDK を読み込む
-- [ ] モック用チェックアウト関数を定義
+- [x] `lib/stripe.ts` を作成しプレースホルダ関数を定義
 - [ ] 実決済は Phase 2 で有効化
 
 ## 🧠 8. 非機能系設定

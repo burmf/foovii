@@ -114,7 +114,11 @@ function MenuView({
           </span>
         </div>
       </aside>
-      <MenuNav categories={categories} activeCategory={activeCategory} />
+      <MenuNav
+        categories={categories}
+        activeCategory={activeCategory}
+        onSelectCategory={(categoryId) => setActiveCategory(categoryId)}
+      />
       <div className="mx-auto w-full max-w-5xl px-6 pb-32 pt-8">
         <MenuHeader store={store} />
         <div className="grid gap-12">

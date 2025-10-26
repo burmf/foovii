@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { MenuItem } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
@@ -14,6 +14,17 @@ interface MenuItemModalProps {
 export function MenuItemModal({ item, onClose, onAdd }: MenuItemModalProps) {
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   return (
     <div
