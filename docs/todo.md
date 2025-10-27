@@ -88,7 +88,7 @@
 
 ## 🧠 8. 非機能系設定
 - [x] ESLint / Prettier を導入しフォーマッターを統一
-- [ ] `env.example` を作成（Phase 2 で鍵追加予定）
+- [x] `env.example` を作成（Supabase 用キーとバケット名を追加）
 - [ ] PWA 化の検討（Add to Home Screen 対応）
 - [ ] 画像圧縮と Lazy Load 設定で Lighthouse 指標を改善
 
@@ -99,7 +99,7 @@
 - [ ] Demo URL: `https://foovii-demo.vercel.app/menu/dodam`（仮）
 
 ## 🧾 10. ドキュメント
-- [ ] `docs/AGENTS.md`（AI 支援開発ガイド）を最新化
+- [x] `docs/AGENTS.md`（AI 支援開発ガイド）を最新化
 - [ ] `docs/yoken`（SRS）および本 `docs/todo.md` をリポジトリ直下から参照可能にする
 - [ ] 仕様変更は `docs/changelog.md` へ追記
 - [ ] 各フェーズ完了時に「Phase Report」を作成
