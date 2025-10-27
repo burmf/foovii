@@ -6,6 +6,8 @@ Primary references live under `docs/`, including:
 - `docs/yoken` — Japanese SRS (scope contract)
 - `docs/dodam-menu.md` — Dodam Melbourne pickup menu snapshot
 - `docs/AGENTS.md` — contributor guidelines
+- `docs/todo.md` — MVP task tracker (日本語)
+- `docs/changelog.md` — notable implementation updates
 
 ## Tech Stack
 

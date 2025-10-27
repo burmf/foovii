@@ -100,8 +100,8 @@
 
 ## 🧾 10. ドキュメント
 - [x] `docs/AGENTS.md`（AI 支援開発ガイド）を最新化
-- [ ] `docs/yoken`（SRS）および本 `docs/todo.md` をリポジトリ直下から参照可能にする
-- [ ] 仕様変更は `docs/changelog.md` へ追記
+- [x] `docs/yoken`（SRS）および本 `docs/todo.md` をリポジトリ直下の README から参照可能にする
+- [x] 仕様変更は `docs/changelog.md` へ追記
 - [ ] 各フェーズ完了時に「Phase Report」を作成
 - [x] `docs/dodam-menu.md` に DODAM オンラインメニューを記録する（2025-10-17）
 
