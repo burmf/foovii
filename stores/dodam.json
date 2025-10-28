@@ -2,6 +2,7 @@
   "slug": "dodam",
   "displayName": "Dodam Melbourne",
   "address": "Retail 2, 7 Bluestone Way, Melbourne",
+  "heroImage": "/menu-images/dodam/boneless-whole-chicken-sweet-and-spicy.png",
   "theme": {
     "primary": "#910018",
     "secondary": "#F5E6D1",

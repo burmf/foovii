@@ -64,6 +64,7 @@ export function MenuItemCard({
               src={item.image}
               alt={item.name}
               fill
+              sizes="96px"
               className="h-full w-full object-cover transition-transform group-hover:scale-105"
             />
           ) : (

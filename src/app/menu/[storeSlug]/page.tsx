@@ -14,7 +14,7 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: MenuPageProps) {
-  const { storeSlug } = params;
+  const { storeSlug } = await params;
   try {
     const store = await getStoreConfig(storeSlug);
     return {
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: MenuPageProps) {
 }
 
 export default async function MenuPage({ params }: MenuPageProps) {
-  const { storeSlug } = params;
+  const { storeSlug } = await params;
 
   const store = await getStoreConfig(storeSlug).catch(() => null);
   if (!store) {

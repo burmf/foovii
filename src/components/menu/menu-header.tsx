@@ -30,6 +30,7 @@ export function MenuHeader({ store }: MenuHeaderProps) {
             src={store.heroImage}
             alt={`${store.displayName} hero`}
             fill
+            sizes="(max-width: 640px) 100vw, 288px"
             className="object-cover"
             priority
           />

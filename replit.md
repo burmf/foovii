@@ -4,6 +4,16 @@
 
 Foovii is a multi-tenant AR × QR ordering SaaS for restaurants. Customers scan QR codes to access an English-language ordering interface, while staff and managers use web dashboards for real-time order management and analytics. The MVP focuses on delivering a functional ordering experience with theme customization per tenant, placeholder payment integration, and optional Supabase menu data sourcing.
 
+## Recent Changes
+
+### 2025-10-28: Replit Migration & Frontend Completion
+- Migrated from Vercel to Replit environment
+- Updated package.json scripts to bind to port 5000 and 0.0.0.0 for Replit compatibility
+- Fixed Next.js 15 async params warnings (added `await params` in dynamic routes)
+- Added hero images to store configurations (dodam.json, soy38.json)
+- Optimized Next.js Image components with proper `sizes` prop for better performance
+- Configured deployment settings for Replit autoscale deployment
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
