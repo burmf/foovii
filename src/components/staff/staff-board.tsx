@@ -192,7 +192,7 @@ export function StaffBoard() {
                                   {order.customer_name || 'Guest'}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  #{order.order_number} · Placed {formatRelativeTime(order.created_at.toISOString())}
+                                  #{order.order_number} · Placed {formatRelativeTime(order.created_at)}
                                 </p>
                               </div>
                             </header>
