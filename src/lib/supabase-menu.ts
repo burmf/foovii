@@ -23,6 +23,13 @@ function getClient() {
   return client;
 }
 
+type SupabaseCategoryJoin = {
+  id: string;
+  slug?: string | null;
+  name?: string | null;
+  sort_order?: number | null;
+};
+
 type SupabaseMenuRow = {
   id: string;
   store_slug: string;
@@ -34,12 +41,7 @@ type SupabaseMenuRow = {
   sort_order?: number | null;
   tags?: string[] | null;
   published?: boolean | null;
-  category?: {
-    id: string;
-    slug?: string | null;
-    name?: string | null;
-    sort_order?: number | null;
-  } | null;
+  category?: SupabaseCategoryJoin | SupabaseCategoryJoin[] | null;
 };
 
 const FALLBACK_CATEGORY = "Uncategorized";
@@ -99,7 +101,9 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
 
     for (const row of rows) {
       const fallbackItem = originalItems.get(row.id);
-      const supabaseCategory = row.category;
+      const supabaseCategory = Array.isArray(row.category) 
+        ? row.category[0] 
+        : row.category;
       const fallbackCategory =
         (supabaseCategory?.slug ? originalCategoriesBySlug.get(supabaseCategory.slug) : undefined) ??
         (fallbackItem ? findCategoryForItem(fallbackItem, store.categories) : undefined);

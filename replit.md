@@ -13,6 +13,9 @@ Foovii is a multi-tenant AR × QR ordering SaaS for restaurants. Customers scan 
 - Added hero images to store configurations (dodam.json, soy38.json)
 - Optimized Next.js Image components with proper `sizes` prop for better performance
 - Configured deployment settings for Replit autoscale deployment
+- Fixed Supabase type definitions to handle both array and object category responses
+- Cleared Next.js image cache and cleaned up environment variables for local-only development
+- All menu images now display correctly with proper type safety
 
 ## User Preferences
 
