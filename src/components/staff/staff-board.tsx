@@ -1,42 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import type { Order, OrderStatus } from "@/lib/db";
 import { cn } from "@/lib/utils";
 
-type OrderStatus = "new" | "in_progress" | "ready" | "served";
+type StaffOrderStatus = "pending" | "preparing" | "ready" | "completed";
 
-type OrderItem = {
-  name: string;
-  quantity: number;
-  notes?: string;
-};
-
-type StaffOrder = {
-  id: string;
-  ticket: string;
-  customer?: string;
-  status: OrderStatus;
-  placedAt: string;
-  items: OrderItem[];
-};
-
-const STATUS_FLOW: OrderStatus[] = ["new", "in_progress", "ready", "served"];
+const STATUS_FLOW: StaffOrderStatus[] = ["pending", "preparing", "ready", "completed"];
 
 const COLUMNS: Array<{
-  id: OrderStatus;
+  id: StaffOrderStatus;
   title: string;
   description: string;
   accent: string;
 }> = [
   {
-    id: "new",
+    id: "pending",
     title: "New",
     description: "Orders just placed from QR menus.",
     accent: "border-primary/60 bg-primary/5",
   },
   {
-    id: "in_progress",
+    id: "preparing",
     title: "In Progress",
     description: "Kitchen is preparing these orders.",
     accent: "border-amber-500/60 bg-amber-500/10",
@@ -48,77 +34,46 @@ const COLUMNS: Array<{
     accent: "border-emerald-500/60 bg-emerald-500/10",
   },
   {
-    id: "served",
+    id: "completed",
     title: "Served",
     description: "Delivered to guests.",
     accent: "border-border/60 bg-foreground/[0.03]",
   },
 ];
 
-const INITIAL_ORDERS: StaffOrder[] = [
-  {
-    id: "ord-1024",
-    ticket: "Table 12",
-    customer: "Kim",
-    status: "new",
-    placedAt: new Date(Date.now() - 4 * 60 * 1000).toISOString(),
-    items: [
-      { name: "Boneless Whole Chicken – Soy Garlic", quantity: 1 },
-      { name: "Sprite", quantity: 2 },
-    ],
-  },
-  {
-    id: "ord-1025",
-    ticket: "Table 8",
-    customer: "Lee",
-    status: "in_progress",
-    placedAt: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
-    items: [
-      { name: "Cupbap – Spicy Pork", quantity: 2, notes: "Medium spice" },
-      { name: "Bong-Bong", quantity: 2 },
-    ],
-  },
-  {
-    id: "ord-1026",
-    ticket: "Pickup",
-    customer: "Delivery",
-    status: "ready",
-    placedAt: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
-    items: [
-      { name: "Cheese Corn Rib Twigim", quantity: 1 },
-      { name: "Eggplant Twigim", quantity: 1 },
-    ],
-  },
-  {
-    id: "ord-1027",
-    ticket: "Table 3",
-    customer: "Nguyen",
-    status: "served",
-    placedAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
-    items: [{ name: "Cupbap – Beef Bulgogi", quantity: 1 }],
-  },
-  {
-    id: "ord-1028",
-    ticket: "Table 18",
-    customer: "Chen",
-    status: "new",
-    placedAt: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
-    items: [
-      { name: "Vegetable Mandu", quantity: 1 },
-      { name: "Soy Cucumbers – Mushroom", quantity: 1 },
-    ],
-  },
-];
-
 export function StaffBoard() {
-  const [orders, setOrders] = useState<StaffOrder[]>(INITIAL_ORDERS);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchOrders = useCallback(async () => {
+    try {
+      const response = await fetch('/api/orders?status=pending,preparing,ready,completed&limit=100');
+      if (!response.ok) {
+        throw new Error('Failed to fetch orders');
+      }
+      const data = await response.json();
+      setOrders(data.orders);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch orders');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
+  }, [fetchOrders]);
 
   const groupedOrders = useMemo(() => {
-    const groups = new Map<OrderStatus, StaffOrder[]>(
-      STATUS_FLOW.map((status) => [status, [] as StaffOrder[]])
+    const groups = new Map<StaffOrderStatus, Order[]>(
+      STATUS_FLOW.map((status) => [status, [] as Order[]])
     );
     orders.forEach((order) => {
-      const collection = groups.get(order.status);
+      const collection = groups.get(order.status as StaffOrderStatus);
       if (collection) {
         collection.push(order);
       }
@@ -126,36 +81,74 @@ export function StaffBoard() {
     return groups;
   }, [orders]);
 
-  const moveOrder = (orderId: string, nextStatus: OrderStatus) => {
-    setOrders((prev) =>
-      prev.map((order) =>
-        order.id === orderId
-          ? {
-              ...order,
-              status: nextStatus,
-            }
-          : order
-      )
-    );
+  const moveOrder = async (orderId: string, nextStatus: StaffOrderStatus) => {
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: nextStatus }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update order');
+      }
+
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId
+            ? {
+                ...order,
+                status: nextStatus as OrderStatus,
+              }
+            : order
+        )
+      );
+    } catch (err) {
+      console.error('Failed to update order:', err);
+      alert('Failed to update order status. Please try again.');
+    }
   };
 
   const getNextStatus = (status: OrderStatus) => {
-    const index = STATUS_FLOW.indexOf(status);
+    const index = STATUS_FLOW.indexOf(status as StaffOrderStatus);
     return index >= 0 && index < STATUS_FLOW.length - 1 ? STATUS_FLOW[index + 1] : null;
   };
 
   const getPreviousStatus = (status: OrderStatus) => {
-    const index = STATUS_FLOW.indexOf(status);
+    const index = STATUS_FLOW.indexOf(status as StaffOrderStatus);
     return index > 0 ? STATUS_FLOW[index - 1] : null;
   };
+
+  if (isLoading) {
+    return (
+      <section className="flex flex-col gap-6">
+        <header className="space-y-2">
+          <h1 className="text-3xl font-semibold text-foreground">Live Orders</h1>
+          <p className="text-sm text-muted-foreground">Loading orders...</p>
+        </header>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="flex flex-col gap-6">
+        <header className="space-y-2">
+          <h1 className="text-3xl font-semibold text-foreground">Live Orders</h1>
+          <p className="text-sm text-destructive">Error: {error}</p>
+        </header>
+      </section>
+    );
+  }
 
   return (
     <section className="flex flex-col gap-6">
       <header className="space-y-2">
         <h1 className="text-3xl font-semibold text-foreground">Live Orders</h1>
         <p className="text-sm text-muted-foreground">
-          Tap a card to progress an order through the kitchen workflow. These samples match the
-          Foovii QR ordering flow (New → In Progress → Ready → Served).
+          Tap a card to progress an order through the kitchen workflow. Orders auto-refresh every 5 seconds.
         </p>
       </header>
 
@@ -196,11 +189,10 @@ export function StaffBoard() {
                             <header className="flex items-center justify-between gap-2">
                               <div className="space-y-1">
                                 <p className="text-sm font-semibold text-foreground">
-                                  {order.ticket}
-                                  {order.customer ? ` · ${order.customer}` : ""}
+                                  {order.customer_name || 'Guest'}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
-                                  #{order.id} · Placed {formatRelativeTime(order.placedAt)}
+                                  #{order.order_number} · Placed {formatRelativeTime(order.created_at.toISOString())}
                                 </p>
                               </div>
                             </header>
@@ -214,12 +206,14 @@ export function StaffBoard() {
                               ))}
                             </ul>
 
-                            {order.items.some((item) => item.notes) ? (
+                            {order.items.some((item) => item.notes) || order.notes ? (
                               <div className="rounded-lg bg-foreground/[0.05] px-3 py-2 text-xs text-muted-foreground">
+                                {order.notes && <div className="font-medium">Note: {order.notes}</div>}
                                 {order.items
                                   .filter((item) => item.notes)
-                                  .map((item) => `${item.name}: ${item.notes}`)
-                                  .join(" · ")}
+                                  .map((item, index) => (
+                                    <div key={index}>{item.name}: {item.notes}</div>
+                                  ))}
                               </div>
                             ) : null}
 
@@ -229,9 +223,9 @@ export function StaffBoard() {
                                   <button
                                     type="button"
                                     className="rounded-lg border border-border bg-background px-2 py-1 text-xs font-medium text-muted-foreground transition hover:border-foreground/40 hover:text-foreground"
-                                    onClick={() => moveOrder(order.id, prevStatus)}
+                                    onClick={() => moveOrder(order.id, prevStatus as StaffOrderStatus)}
                                   >
-                                    ← {columnLabel(prevStatus)}
+                                    ← {columnLabel(prevStatus as StaffOrderStatus)}
                                   </button>
                                 ) : (
                                   <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -244,9 +238,9 @@ export function StaffBoard() {
                                 <button
                                   type="button"
                                   className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow transition hover:bg-primary/90"
-                                  onClick={() => moveOrder(order.id, nextStatus)}
+                                  onClick={() => moveOrder(order.id, nextStatus as StaffOrderStatus)}
                                 >
-                                  Move to {columnLabel(nextStatus)}
+                                  Move to {columnLabel(nextStatus as StaffOrderStatus)}
                                 </button>
                               ) : (
                                 <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -269,15 +263,15 @@ export function StaffBoard() {
   );
 }
 
-function columnLabel(status: OrderStatus) {
+function columnLabel(status: StaffOrderStatus) {
   switch (status) {
-    case "new":
+    case "pending":
       return "New";
-    case "in_progress":
+    case "preparing":
       return "In Progress";
     case "ready":
       return "Ready";
-    case "served":
+    case "completed":
       return "Served";
     default:
       return status;

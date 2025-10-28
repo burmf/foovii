@@ -30,7 +30,7 @@ export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          store: store.slug,
+          storeSlug: store.slug,
           items: lines.map((line) => ({
             id: line.id,
             name: line.name,
@@ -38,7 +38,8 @@ export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }
             quantity: line.quantity,
             notes: line.notes,
           })),
-          subtotal,
+          totalCents: Math.round(subtotal * 100),
+          currency: lines[0]?.currency ?? "AUD",
         }),
       });
 
@@ -46,11 +47,11 @@ export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }
         throw new Error("Failed to place order");
       }
 
-      const result = (await response.json()) as { orderId?: string };
+      const result = (await response.json()) as { orderId?: string; orderNumber?: string };
       setStatus("success");
       setMessage("Order placed. Staff dashboard will receive the ticket.");
       clear();
-      onOrderSuccess?.(result.orderId ?? "mock");
+      onOrderSuccess?.(result.orderNumber ?? result.orderId ?? "unknown");
       onClose();
     } catch (error) {
       console.error(error);

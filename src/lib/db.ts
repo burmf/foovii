@@ -155,3 +155,74 @@ export async function updateOrderStatus(
     items: JSON.parse(order.items as string),
   } as Order;
 }
+
+export type Analytics = {
+  totalRevenue: number;
+  totalOrders: number;
+  avgOrderValue: number;
+  hourlyData: Array<{
+    hour: string;
+    orders: number;
+    revenue: number;
+  }>;
+};
+
+export async function getAnalytics(filters?: {
+  store_slug?: string;
+  startDate?: Date;
+  endDate?: Date;
+}): Promise<Analytics> {
+  const startDate = filters?.startDate || new Date(new Date().setHours(0, 0, 0, 0));
+  const endDate = filters?.endDate || new Date(new Date().setHours(23, 59, 59, 999));
+  
+  let query = sql`
+    SELECT
+      COUNT(*) as total_orders,
+      COALESCE(SUM(total_cents), 0) as total_revenue,
+      COALESCE(AVG(total_cents), 0) as avg_order_value
+    FROM orders
+    WHERE created_at >= ${startDate.toISOString()}
+    AND created_at <= ${endDate.toISOString()}
+    AND status != 'cancelled'
+  `;
+  
+  if (filters?.store_slug) {
+    query = sql`${query} AND store_slug = ${filters.store_slug}`;
+  }
+  
+  const result = await query;
+  const stats = result[0];
+  
+  let hourlyQuery = sql`
+    SELECT
+      TO_CHAR(created_at, 'HH24:00') as hour,
+      COUNT(*) as orders,
+      COALESCE(SUM(total_cents), 0) as revenue
+    FROM orders
+    WHERE created_at >= ${startDate.toISOString()}
+    AND created_at <= ${endDate.toISOString()}
+    AND status != 'cancelled'
+  `;
+  
+  if (filters?.store_slug) {
+    hourlyQuery = sql`${hourlyQuery} AND store_slug = ${filters.store_slug}`;
+  }
+  
+  hourlyQuery = sql`${hourlyQuery}
+    GROUP BY TO_CHAR(created_at, 'HH24:00')
+    ORDER BY hour
+  `;
+  
+  const hourlyResult = await hourlyQuery;
+  
+  return {
+    totalRevenue: parseFloat(stats.total_revenue as string) / 100,
+    totalOrders: parseInt(stats.total_orders as string),
+    avgOrderValue: parseFloat(stats.avg_order_value as string) / 100,
+    hourlyData: hourlyResult.map((row) => ({
+      hour: row.hour as string,
+      orders: parseInt(row.orders as string),
+      revenue: parseFloat(row.revenue as string) / 100,
+    })),
+  };
+}
