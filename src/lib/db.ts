@@ -173,6 +173,71 @@ export type Analytics = {
   };
 };
 
+export type OrderHistoryResult = {
+  orders: Order[];
+  total: number;
+  limit: number;
+  offset: number;
+};
+
+export async function getOrderHistory(filters?: {
+  startDate?: string;
+  endDate?: string;
+  storeSlug?: string;
+  statuses?: string[];
+  orderNumber?: string;
+  limit?: number;
+  offset?: number;
+}): Promise<OrderHistoryResult> {
+  const limit = filters?.limit || 50;
+  const offset = filters?.offset || 0;
+
+  let countQuery = sql`SELECT COUNT(*) as total FROM orders WHERE 1=1`;
+  let dataQuery = sql`SELECT * FROM orders WHERE 1=1`;
+
+  if (filters?.startDate) {
+    countQuery = sql`${countQuery} AND created_at >= ${filters.startDate}`;
+    dataQuery = sql`${dataQuery} AND created_at >= ${filters.startDate}`;
+  }
+
+  if (filters?.endDate) {
+    countQuery = sql`${countQuery} AND created_at <= ${filters.endDate}`;
+    dataQuery = sql`${dataQuery} AND created_at <= ${filters.endDate}`;
+  }
+
+  if (filters?.storeSlug) {
+    countQuery = sql`${countQuery} AND store_slug = ${filters.storeSlug}`;
+    dataQuery = sql`${dataQuery} AND store_slug = ${filters.storeSlug}`;
+  }
+
+  if (filters?.statuses && filters.statuses.length > 0) {
+    countQuery = sql`${countQuery} AND status = ANY(${filters.statuses})`;
+    dataQuery = sql`${dataQuery} AND status = ANY(${filters.statuses})`;
+  }
+
+  if (filters?.orderNumber) {
+    countQuery = sql`${countQuery} AND order_number ILIKE ${'%' + filters.orderNumber + '%'}`;
+    dataQuery = sql`${dataQuery} AND order_number ILIKE ${'%' + filters.orderNumber + '%'}`;
+  }
+
+  dataQuery = sql`${dataQuery} ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`;
+
+  const [countResult, dataResult] = await Promise.all([
+    countQuery,
+    dataQuery,
+  ]);
+
+  const total = parseInt(countResult[0].total as string);
+  const orders = dataResult as unknown as Order[];
+
+  return {
+    orders,
+    total,
+    limit,
+    offset,
+  };
+}
+
 export async function getAnalytics(filters?: {
   store_slug?: string;
   startDate?: Date;
