@@ -17,7 +17,11 @@ Foovii is a multi-tenant AR × QR ordering SaaS for restaurants. Customers scan 
   - Period-over-period comparison analytics
 - Fixed order number generation to prevent duplicates using MAX query
 - Corrected JSONB data handling for items column in database
-- Added order cancellation feature to staff dashboard with confirmation dialog
+- Added order cancellation feature to staff dashboard:
+  - Three-dot menu (MoreVertical icon) on each order card
+  - Custom confirmation modal with order number and warning message
+  - "戻る" (Back) and "キャンセルする" (Cancel) buttons
+  - Overlay click to dismiss
 - Fixed formatRelativeTime function to accept both Date and string types
 
 ### 2025-10-28: Replit Migration & Frontend Completion

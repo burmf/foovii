@@ -47,6 +47,10 @@ export function StaffBoard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [cancelConfirmation, setCancelConfirmation] = useState<{
+    orderId: string;
+    orderNumber: string;
+  } | null>(null);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -113,10 +117,14 @@ export function StaffBoard() {
     }
   };
 
-  const cancelOrder = async (orderId: string, orderNumber: string) => {
-    if (!confirm(`注文 #${orderNumber} をキャンセルしますか？この操作は取り消せません。`)) {
-      return;
-    }
+  const handleCancelClick = (orderId: string, orderNumber: string) => {
+    setCancelConfirmation({ orderId, orderNumber });
+  };
+
+  const confirmCancelOrder = async () => {
+    if (!cancelConfirmation) return;
+
+    const { orderId } = cancelConfirmation;
 
     try {
       const response = await fetch(`/api/orders/${orderId}`, {
@@ -132,9 +140,11 @@ export function StaffBoard() {
       }
 
       setOrders((prev) => prev.filter((order) => order.id !== orderId));
+      setCancelConfirmation(null);
     } catch (err) {
       console.error('Failed to cancel order:', err);
       alert('注文のキャンセルに失敗しました。もう一度お試しください。');
+      setCancelConfirmation(null);
     }
   };
 
@@ -243,7 +253,7 @@ export function StaffBoard() {
                                         className="w-full px-3 py-2 text-left text-sm text-destructive transition hover:bg-destructive/10"
                                         onClick={() => {
                                           setOpenMenuId(null);
-                                          cancelOrder(order.id, order.order_number);
+                                          handleCancelClick(order.id, order.order_number);
                                         }}
                                       >
                                         キャンセル
@@ -316,6 +326,41 @@ export function StaffBoard() {
           );
         })}
       </div>
+
+      {cancelConfirmation && (
+        <>
+          <div 
+            className="fixed inset-0 z-40 bg-black/50" 
+            onClick={() => setCancelConfirmation(null)}
+          />
+          <div className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border border-border bg-card p-6 shadow-2xl">
+            <h2 className="text-xl font-semibold text-foreground">
+              注文をキャンセルしますか？
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              注文 #{cancelConfirmation.orderNumber} をキャンセルしようとしています。
+              <br />
+              この操作は取り消せません。
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                className="rounded-lg border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+                onClick={() => setCancelConfirmation(null)}
+              >
+                戻る
+              </button>
+              <button
+                type="button"
+                className="rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-destructive-foreground shadow transition hover:bg-destructive/90"
+                onClick={confirmCancelOrder}
+              >
+                キャンセルする
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }
