@@ -23,6 +23,15 @@ Foovii is a multi-tenant AR × QR ordering SaaS for restaurants. Customers scan 
   - "戻る" (Back) and "キャンセルする" (Cancel) buttons
   - Overlay click to dismiss
 - Fixed formatRelativeTime function to accept both Date and string types
+- Implemented order history feature for manager dashboard:
+  - New tab-based UI (Analytics / Order History) with independent operation
+  - Order history API endpoint (/api/orders/history) with comprehensive filtering
+  - Search by order number (partial match, case-insensitive)
+  - Date range filters (All Time, Today, Yesterday, Last 7 Days, Last 30 Days, This Month, Last Month)
+  - Status filters (All, New, Preparing, Ready, Completed, Cancelled)
+  - Pagination with 20 orders per page
+  - Order detail modal with Esc key and overlay click to close
+  - Fixed analytics tab refresh logic to properly update when switching tabs or changing date ranges
 
 ### 2025-10-28: Replit Migration & Frontend Completion
 - Migrated from Vercel to Replit environment
