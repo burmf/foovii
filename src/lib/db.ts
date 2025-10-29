@@ -39,17 +39,24 @@ export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed' | 'can
 
 export async function generateOrderNumber(storeSlug: string): Promise<string> {
   const storePrefix = storeSlug.substring(0, 2).toUpperCase();
-  const today = new Date().toISOString().split('T')[0];
   
   const result = await sql`
-    SELECT COUNT(*) as count
+    SELECT order_number
     FROM orders
     WHERE store_slug = ${storeSlug}
-    AND created_at::date = ${today}::date
+    AND order_number LIKE ${storePrefix + '-%'}
+    ORDER BY created_at DESC
+    LIMIT 1
   `;
   
-  const count = parseInt(result[0].count as string) + 1;
-  return `${storePrefix}-${count.toString().padStart(3, '0')}`;
+  let nextNumber = 1;
+  if (result.length > 0) {
+    const lastOrderNumber = result[0].order_number as string;
+    const lastNumber = parseInt(lastOrderNumber.split('-')[1]);
+    nextNumber = lastNumber + 1;
+  }
+  
+  return `${storePrefix}-${nextNumber.toString().padStart(3, '0')}`;
 }
 
 export async function createOrder(data: {
@@ -82,7 +89,7 @@ export async function createOrder(data: {
       ${data.customer_name || null},
       ${data.customer_phone || null},
       ${data.customer_email || null},
-      ${JSON.stringify(data.items)},
+      ${sql.json(data.items)},
       ${data.total_cents},
       ${data.currency || 'AUD'},
       ${data.notes || null},
@@ -92,10 +99,7 @@ export async function createOrder(data: {
   `;
   
   const order = result[0];
-  return {
-    ...order,
-    items: JSON.parse(order.items as string),
-  } as Order;
+  return order as Order;
 }
 
 export async function getOrders(filters?: {
@@ -125,10 +129,7 @@ export async function getOrders(filters?: {
   
   const result = await query;
   
-  return result.map((order) => ({
-    ...order,
-    items: JSON.parse(order.items as string),
-  })) as Order[];
+  return result as Order[];
 }
 
 export async function updateOrderStatus(
@@ -150,10 +151,7 @@ export async function updateOrderStatus(
   }
   
   const order = result[0];
-  return {
-    ...order,
-    items: JSON.parse(order.items as string),
-  } as Order;
+  return order as Order;
 }
 
 export type Analytics = {
