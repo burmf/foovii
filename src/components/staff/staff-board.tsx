@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { X } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 
 import type { Order, OrderStatus } from "@/lib/db";
 import { cn } from "@/lib/utils";
@@ -46,6 +46,7 @@ export function StaffBoard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -221,14 +222,36 @@ export function StaffBoard() {
                                   #{order.order_number} · Placed {formatRelativeTime(order.created_at)}
                                 </p>
                               </div>
-                              <button
-                                type="button"
-                                className="rounded-lg p-1.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
-                                onClick={() => cancelOrder(order.id, order.order_number)}
-                                title="注文をキャンセル"
-                              >
-                                <X className="h-4 w-4" />
-                              </button>
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  className="rounded-lg p-1.5 text-muted-foreground transition hover:bg-muted"
+                                  onClick={() => setOpenMenuId(openMenuId === order.id ? null : order.id)}
+                                  title="メニュー"
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </button>
+                                {openMenuId === order.id && (
+                                  <>
+                                    <div 
+                                      className="fixed inset-0 z-10" 
+                                      onClick={() => setOpenMenuId(null)}
+                                    />
+                                    <div className="absolute right-0 top-8 z-20 min-w-[120px] rounded-lg border border-border bg-card shadow-lg">
+                                      <button
+                                        type="button"
+                                        className="w-full px-3 py-2 text-left text-sm text-destructive transition hover:bg-destructive/10"
+                                        onClick={() => {
+                                          setOpenMenuId(null);
+                                          cancelOrder(order.id, order.order_number);
+                                        }}
+                                      >
+                                        キャンセル
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
                             </header>
 
                             <ul className="space-y-2 text-sm text-foreground">
