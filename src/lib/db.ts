@@ -129,7 +129,7 @@ export async function getOrders(filters?: {
   
   const result = await query;
   
-  return result as Order[];
+  return result as unknown as Order[];
 }
 
 export async function updateOrderStatus(

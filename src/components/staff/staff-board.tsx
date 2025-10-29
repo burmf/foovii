@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { X } from "lucide-react";
 
 import type { Order, OrderStatus } from "@/lib/db";
 import { cn } from "@/lib/utils";
@@ -111,6 +112,31 @@ export function StaffBoard() {
     }
   };
 
+  const cancelOrder = async (orderId: string, orderNumber: string) => {
+    if (!confirm(`注文 #${orderNumber} をキャンセルしますか？この操作は取り消せません。`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'cancelled' }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel order');
+      }
+
+      setOrders((prev) => prev.filter((order) => order.id !== orderId));
+    } catch (err) {
+      console.error('Failed to cancel order:', err);
+      alert('注文のキャンセルに失敗しました。もう一度お試しください。');
+    }
+  };
+
   const getNextStatus = (status: OrderStatus) => {
     const index = STATUS_FLOW.indexOf(status as StaffOrderStatus);
     return index >= 0 && index < STATUS_FLOW.length - 1 ? STATUS_FLOW[index + 1] : null;
@@ -195,6 +221,14 @@ export function StaffBoard() {
                                   #{order.order_number} · Placed {formatRelativeTime(order.created_at)}
                                 </p>
                               </div>
+                              <button
+                                type="button"
+                                className="rounded-lg p-1.5 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => cancelOrder(order.id, order.order_number)}
+                                title="注文をキャンセル"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
                             </header>
 
                             <ul className="space-y-2 text-sm text-foreground">
@@ -278,8 +312,8 @@ function columnLabel(status: StaffOrderStatus) {
   }
 }
 
-function formatRelativeTime(iso: string) {
-  const date = new Date(iso);
+function formatRelativeTime(dateOrIso: Date | string) {
+  const date = typeof dateOrIso === 'string' ? new Date(dateOrIso) : dateOrIso;
   if (Number.isNaN(date.getTime())) {
     return "recently";
   }
