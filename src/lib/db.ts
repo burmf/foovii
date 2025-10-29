@@ -160,17 +160,26 @@ export type Analytics = {
   totalRevenue: number;
   totalOrders: number;
   avgOrderValue: number;
+  avgFulfillmentTime: number | null;
+  completedOrders: number;
+  pendingOrders: number;
   hourlyData: Array<{
     hour: string;
     orders: number;
     revenue: number;
   }>;
+  comparison?: {
+    revenue: number;
+    orders: number;
+    avgOrderValue: number;
+  };
 };
 
 export async function getAnalytics(filters?: {
   store_slug?: string;
   startDate?: Date;
   endDate?: Date;
+  compareWithPrevious?: boolean;
 }): Promise<Analytics> {
   const startDate = filters?.startDate || new Date(new Date().setHours(0, 0, 0, 0));
   const endDate = filters?.endDate || new Date(new Date().setHours(23, 59, 59, 999));
@@ -179,7 +188,15 @@ export async function getAnalytics(filters?: {
     SELECT
       COUNT(*) as total_orders,
       COALESCE(SUM(total_cents), 0) as total_revenue,
-      COALESCE(AVG(total_cents), 0) as avg_order_value
+      COALESCE(AVG(total_cents), 0) as avg_order_value,
+      COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_orders,
+      COUNT(CASE WHEN status IN ('pending', 'preparing', 'ready') THEN 1 END) as pending_orders,
+      AVG(
+        CASE 
+          WHEN completed_at IS NOT NULL 
+          THEN EXTRACT(EPOCH FROM (completed_at - created_at)) / 60
+        END
+      ) as avg_fulfillment_minutes
     FROM orders
     WHERE created_at >= ${startDate.toISOString()}
     AND created_at <= ${endDate.toISOString()}
@@ -215,14 +232,49 @@ export async function getAnalytics(filters?: {
   
   const hourlyResult = await hourlyQuery;
   
-  return {
+  const analytics: Analytics = {
     totalRevenue: parseFloat(stats.total_revenue as string) / 100,
     totalOrders: parseInt(stats.total_orders as string),
     avgOrderValue: parseFloat(stats.avg_order_value as string) / 100,
+    avgFulfillmentTime: stats.avg_fulfillment_minutes ? parseFloat(stats.avg_fulfillment_minutes as string) : null,
+    completedOrders: parseInt(stats.completed_orders as string),
+    pendingOrders: parseInt(stats.pending_orders as string),
     hourlyData: hourlyResult.map((row) => ({
       hour: row.hour as string,
       orders: parseInt(row.orders as string),
       revenue: parseFloat(row.revenue as string) / 100,
     })),
   };
+  
+  if (filters?.compareWithPrevious) {
+    const duration = endDate.getTime() - startDate.getTime();
+    const prevStartDate = new Date(startDate.getTime() - duration);
+    const prevEndDate = new Date(startDate.getTime() - 1);
+    
+    let compQuery = sql`
+      SELECT
+        COUNT(*) as total_orders,
+        COALESCE(SUM(total_cents), 0) as total_revenue,
+        COALESCE(AVG(total_cents), 0) as avg_order_value
+      FROM orders
+      WHERE created_at >= ${prevStartDate.toISOString()}
+      AND created_at <= ${prevEndDate.toISOString()}
+      AND status != 'cancelled'
+    `;
+    
+    if (filters?.store_slug) {
+      compQuery = sql`${compQuery} AND store_slug = ${filters.store_slug}`;
+    }
+    
+    const compResult = await compQuery;
+    const compStats = compResult[0];
+    
+    analytics.comparison = {
+      revenue: parseFloat(compStats.total_revenue as string) / 100,
+      orders: parseInt(compStats.total_orders as string),
+      avgOrderValue: parseFloat(compStats.avg_order_value as string) / 100,
+    };
+  }
+  
+  return analytics;
 }
