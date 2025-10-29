@@ -8,6 +8,7 @@ export async function GET(request: Request) {
     const storeSlug = searchParams.get("storeSlug");
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
+    const compareWithPrevious = searchParams.get("compareWithPrevious") === "true";
 
     const filters: Parameters<typeof getAnalytics>[0] = {};
 
@@ -21,6 +22,10 @@ export async function GET(request: Request) {
 
     if (endDate) {
       filters.endDate = new Date(endDate);
+    }
+
+    if (compareWithPrevious) {
+      filters.compareWithPrevious = true;
     }
 
     const analytics = await getAnalytics(filters);
