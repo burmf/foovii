@@ -237,11 +237,25 @@ function findItemByName(
   categories: MenuCategory[],
 ): MenuItem | undefined {
   const normalizedSearchName = name.trim().toLowerCase();
+
+  // 1. Try exact match first
   for (const category of categories) {
     const item = category.items.find(
       (i) => i.name.trim().toLowerCase() === normalizedSearchName,
     );
     if (item) return item;
   }
+
+  // 2. Try partial match
+  for (const category of categories) {
+    const item = category.items.find(
+      (i) => {
+        const itemName = i.name.trim().toLowerCase();
+        return normalizedSearchName.includes(itemName) || itemName.includes(normalizedSearchName);
+      }
+    );
+    if (item) return item;
+  }
+
   return undefined;
 }
