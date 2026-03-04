@@ -1,0 +1,160 @@
+{
+    "slug": "southern-xross",
+    "displayName": "Southern Xross Kebabs",
+    "address": "Shop 6, 620 Collins St, Melbourne VIC 3000",
+    "heroImage": "/menu-images/southern-xross/lamb-kebab.png",
+    "theme": {
+        "primary": "#2C3E50",
+        "secondary": "#F8F9FA",
+        "accent": "#E74C3C",
+        "background": "#FFFFFF"
+    },
+    "categories": [
+        {
+            "id": "mains",
+            "name": "Mains",
+            "items": [
+                {
+                    "id": "sx-lamb-kebab",
+                    "name": "Lamb Kebab",
+                    "description": "Slow-roasted lamb doner with lettuce, tomato, onion, and garlic sauce in warm flatbread.",
+                    "price": 23.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/lamb-kebab.png",
+                    "modelUrl": "/models/lamb-kebab-wrap.glb",
+                    "modelUrlUsdz": "/models/lamb-kebab-wrap.usdz"
+                },
+                {
+                    "id": "sx-chicken-kebab",
+                    "name": "Chicken Kebab",
+                    "description": "Grilled chicken with lettuce, tomato, onion, and garlic sauce in warm flatbread.",
+                    "price": 23.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/chicken-kebab.png",
+                    "modelUrl": "/models/lamb-kebab-wrap.glb",
+                    "modelUrlUsdz": "/models/lamb-kebab-wrap.usdz"
+                },
+                {
+                    "id": "sx-mixed-kebab",
+                    "name": "Mixed Kebab",
+                    "description": "Combination of lamb and chicken doner with lettuce, tomato, onion, and garlic sauce in warm flatbread.",
+                    "price": 23.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/lamb-kebab.png",
+                    "modelUrl": "/models/lamb-kebab-wrap.glb",
+                    "modelUrlUsdz": "/models/lamb-kebab-wrap.usdz"
+                },
+                {
+                    "id": "sx-falafel-wrap",
+                    "name": "Falafel Wrap",
+                    "description": "Home-style crispy falafel with fresh salad and sauce in warm flatbread.",
+                    "price": 23.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/falafel-wrap.png"
+                },
+                {
+                    "id": "sx-kebab-plate",
+                    "name": "Kebab Plate",
+                    "description": "Your choice of lamb, chicken, mixed meat, or falafel served with two dips, fresh salad, and bread.",
+                    "price": 27.50,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/kebab-plate.png"
+                },
+                {
+                    "id": "sx-meat-container",
+                    "name": "Meat Container",
+                    "description": "Your choice of protein served with a selected sauce.",
+                    "price": 23.90,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/lamb-kebab.png"
+                },
+                {
+                    "id": "sx-salad-pack",
+                    "name": "Salad Pack",
+                    "description": "Customisable with your choice of salad, protein, and sauce.",
+                    "price": 20.90,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/kebab-plate.png"
+                },
+                {
+                    "id": "sx-hsp",
+                    "name": "HSP Snack Pack",
+                    "description": "Chips topped with cheese, seasoned meat, and your choice of sauce.",
+                    "price": 24.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/hsp.png",
+                    "modelUrl": "/models/hsp.glb",
+                    "modelUrlUsdz": "/models/hsp.usdz"
+                },
+                {
+                    "id": "sx-chicken-schnitzel",
+                    "name": "Chicken Schnitzel",
+                    "description": "Golden crumbed chicken schnitzel served with chips and aioli.",
+                    "price": 19.50,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/chicken-schnitzel.png"
+                },
+                {
+                    "id": "sx-chicken-nuggets",
+                    "name": "Chicken Nuggets",
+                    "description": "6 crispy chicken nuggets served with chips and aioli.",
+                    "price": 13.50,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/chicken-nuggets.png"
+                }
+            ]
+        },
+        {
+            "id": "combos",
+            "name": "Combos",
+            "items": [
+                {
+                    "id": "sx-kebab-chips-can",
+                    "name": "Kebab, Chips & Can",
+                    "description": "Your choice of kebab served with a side of chips and a canned drink.",
+                    "price": 29.90,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/chicken-kebab.png"
+                },
+                {
+                    "id": "sx-hsp-can",
+                    "name": "HSP & Can",
+                    "description": "HSP Snack Pack with a canned drink.",
+                    "price": 25.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/southern-xross/hsp.png"
+                }
+            ]
+        },
+        {
+            "id": "dips",
+            "name": "Dips",
+            "items": [
+                {
+                    "id": "sx-dip-chilli",
+                    "name": "Chilli Dip",
+                    "price": 10.00,
+                    "currency": "AUD"
+                },
+                {
+                    "id": "sx-dip-tziki",
+                    "name": "Tziki Dip",
+                    "price": 10.00,
+                    "currency": "AUD"
+                },
+                {
+                    "id": "sx-dip-hommus",
+                    "name": "Hommus Dip",
+                    "price": 10.00,
+                    "currency": "AUD"
+                },
+                {
+                    "id": "sx-dip-capsicum",
+                    "name": "Capsicum Dip",
+                    "price": 10.00,
+                    "currency": "AUD"
+                }
+            ]
+        }
+    ]
+}
