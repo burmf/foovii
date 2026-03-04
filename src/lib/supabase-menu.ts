@@ -248,13 +248,26 @@ function findItemByName(
 
   // 2. Try partial match
   for (const category of categories) {
-    const item = category.items.find(
-      (i) => {
-        const itemName = i.name.trim().toLowerCase();
-        return normalizedSearchName.includes(itemName) || itemName.includes(normalizedSearchName);
-      }
-    );
+    const item = category.items.find((i) => {
+      const itemName = i.name.trim().toLowerCase();
+      return (
+        normalizedSearchName.includes(itemName) ||
+        itemName.includes(normalizedSearchName)
+      );
+    });
     if (item) return item;
+  }
+
+  // 3. Try keyword base (especially for Southern Xross)
+  const keywords = ["lamb", "chicken", "mixed", "hsp", "snack pack"];
+  const matchedKeyword = keywords.find((k) => normalizedSearchName.includes(k));
+  if (matchedKeyword) {
+    for (const category of categories) {
+      const item = category.items.find((i) =>
+        i.name.toLowerCase().includes(matchedKeyword),
+      );
+      if (item && (item.modelUrl || item.modelUrlUsdz)) return item;
+    }
   }
 
   return undefined;
