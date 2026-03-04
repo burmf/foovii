@@ -166,6 +166,29 @@ export async function applySupabaseMenu(
       };
 
       categoryEntry.category.items.push(item);
+      originalItems.delete(row.id);
+    }
+
+    // Add items that were not in Supabase but are in the JSON (fallback)
+    for (const [id, fallbackItem] of originalItems.entries()) {
+      const fallbackCategory = findCategoryForItem(fallbackItem, store.categories);
+      if (!fallbackCategory) continue;
+
+      const categoryUuid = deterministicUuid(`${store.slug}:category:${fallbackCategory.id}`);
+      if (!categoryMap.has(fallbackCategory.id)) {
+        // Find existing category entry by UUID or ID
+        const existingEntry = Array.from(categoryMap.values()).find(e => e.category.id === fallbackCategory.id);
+        if (existingEntry) {
+          existingEntry.category.items.push(fallbackItem);
+        } else {
+          categoryMap.set(fallbackCategory.id, {
+            category: { ...fallbackCategory, items: [fallbackItem] },
+            sortOrder: originalCategoryOrder.get(categoryUuid) ?? 999
+          });
+        }
+      } else {
+        categoryMap.get(fallbackCategory.id)!.category.items.push(fallbackItem);
+      }
     }
 
     const categories = Array.from(categoryMap.values())
