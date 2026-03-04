@@ -170,24 +170,21 @@ export async function applySupabaseMenu(
     }
 
     // Add items that were not in Supabase but are in the JSON (fallback)
-    for (const [id, fallbackItem] of originalItems.entries()) {
+    for (const [uuid, fallbackItem] of originalItems.entries()) {
       const fallbackCategory = findCategoryForItem(fallbackItem, store.categories);
       if (!fallbackCategory) continue;
 
       const categoryUuid = deterministicUuid(`${store.slug}:category:${fallbackCategory.id}`);
-      if (!categoryMap.has(fallbackCategory.id)) {
-        // Find existing category entry by UUID or ID
-        const existingEntry = Array.from(categoryMap.values()).find(e => e.category.id === fallbackCategory.id);
-        if (existingEntry) {
-          existingEntry.category.items.push(fallbackItem);
-        } else {
-          categoryMap.set(fallbackCategory.id, {
-            category: { ...fallbackCategory, items: [fallbackItem] },
-            sortOrder: originalCategoryOrder.get(categoryUuid) ?? 999
-          });
-        }
+      const categoryEntry = categoryMap.get(categoryUuid);
+
+      if (categoryEntry) {
+        categoryEntry.category.items.push(fallbackItem);
       } else {
-        categoryMap.get(fallbackCategory.id)!.category.items.push(fallbackItem);
+        // If category not in map, create it
+        categoryMap.set(categoryUuid, {
+          category: { ...fallbackCategory, items: [fallbackItem] },
+          sortOrder: originalCategoryOrder.get(categoryUuid) ?? 999
+        });
       }
     }
 
