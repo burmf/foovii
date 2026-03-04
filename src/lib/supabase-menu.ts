@@ -46,7 +46,9 @@ type SupabaseMenuRow = {
 
 const FALLBACK_CATEGORY = "Uncategorized";
 
-function normaliseImagePath(pathValue: string | null | undefined): string | undefined {
+function normaliseImagePath(
+  pathValue: string | null | undefined,
+): string | undefined {
   if (!pathValue) return undefined;
   if (pathValue.startsWith("http://") || pathValue.startsWith("https://")) {
     return pathValue;
@@ -57,7 +59,9 @@ function normaliseImagePath(pathValue: string | null | undefined): string | unde
   return `/${pathValue}`;
 }
 
-export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig> {
+export async function applySupabaseMenu(
+  store: StoreConfig,
+): Promise<StoreConfig> {
   const supabase = getClient();
   if (!supabase) {
     return store;
@@ -80,7 +84,7 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
       .from("menu_items")
       .select(
         `id, store_slug, name, description, price_cents, currency, image_path, sort_order, tags, published,
-        category:menu_categories!inner(id, slug, name, sort_order)`
+        category:menu_categories!inner(id, slug, name, sort_order)`,
       )
       .eq("store_slug", store.slug)
       .eq("published", true)
@@ -97,20 +101,32 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
     }
 
     const rows = data as SupabaseMenuRow[];
-    const categoryMap = new Map<string, { category: MenuCategory; sortOrder: number }>();
+    const categoryMap = new Map<
+      string,
+      { category: MenuCategory; sortOrder: number }
+    >();
 
     for (const row of rows) {
       const fallbackItem = originalItems.get(row.id);
-      const supabaseCategory = Array.isArray(row.category) 
-        ? row.category[0] 
+      const supabaseCategory = Array.isArray(row.category)
+        ? row.category[0]
         : row.category;
       const fallbackCategory =
-        (supabaseCategory?.slug ? originalCategoriesBySlug.get(supabaseCategory.slug) : undefined) ??
-        (fallbackItem ? findCategoryForItem(fallbackItem, store.categories) : undefined);
+        (supabaseCategory?.slug
+          ? originalCategoriesBySlug.get(supabaseCategory.slug)
+          : undefined) ??
+        (fallbackItem
+          ? findCategoryForItem(fallbackItem, store.categories)
+          : undefined);
 
-      const categoryName = supabaseCategory?.name?.trim() || fallbackCategory?.name || FALLBACK_CATEGORY;
+      const categoryName =
+        supabaseCategory?.name?.trim() ||
+        fallbackCategory?.name ||
+        FALLBACK_CATEGORY;
       const categorySlug =
-        supabaseCategory?.slug?.trim() || fallbackCategory?.id || slugify(categoryName);
+        supabaseCategory?.slug?.trim() ||
+        fallbackCategory?.id ||
+        slugify(categoryName);
 
       if (!categoryMap.has(categorySlug)) {
         categoryMap.set(categorySlug, {
@@ -122,7 +138,9 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
           },
           sortOrder:
             supabaseCategory?.sort_order ??
-            (fallbackCategory ? originalCategoryOrder.get(fallbackCategory.id) ?? 0 : Number.MAX_SAFE_INTEGER),
+            (fallbackCategory
+              ? (originalCategoryOrder.get(fallbackCategory.id) ?? 0)
+              : Number.MAX_SAFE_INTEGER),
         });
       }
 
@@ -130,7 +148,7 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
       const price =
         typeof row.price_cents === "number"
           ? row.price_cents / 100
-          : fallbackItem?.price ?? 0;
+          : (fallbackItem?.price ?? 0);
 
       const item: MenuItem = {
         id: row.id,
@@ -140,6 +158,8 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
         currency: row.currency ?? fallbackItem?.currency ?? "AUD",
         tags: row.tags ?? fallbackItem?.tags ?? undefined,
         image: normaliseImagePath(row.image_path) ?? fallbackItem?.image,
+        modelUrl: fallbackItem?.modelUrl,
+        modelUrlUsdz: fallbackItem?.modelUrlUsdz,
       };
 
       categoryEntry.category.items.push(item);
@@ -149,7 +169,9 @@ export async function applySupabaseMenu(store: StoreConfig): Promise<StoreConfig
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map(({ category }) => ({
         ...category,
-        items: category.items.sort((a, b) => a.name.localeCompare(b.name, "en")),
+        items: category.items.sort((a, b) =>
+          a.name.localeCompare(b.name, "en"),
+        ),
       }));
 
     return {
@@ -169,7 +191,10 @@ function slugify(value: string) {
     .replace(/(^-|-$)+/g, "");
 }
 
-function findCategoryForItem(item: MenuItem | undefined, categories: MenuCategory[]): MenuCategory | undefined {
+function findCategoryForItem(
+  item: MenuItem | undefined,
+  categories: MenuCategory[],
+): MenuCategory | undefined {
   if (!item) return undefined;
   for (const category of categories) {
     if (category.items.some((categoryItem) => categoryItem.id === item.id)) {
