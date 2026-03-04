@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
+import { deterministicUuid } from "@/lib/utils";
 import type { MenuCategory, MenuItem, StoreConfig } from "@/lib/types";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -73,10 +74,12 @@ export async function applySupabaseMenu(
     const originalCategoryOrder = new Map<string, number>();
 
     store.categories.forEach((category, index) => {
-      originalCategoriesBySlug.set(category.id, category);
-      originalCategoryOrder.set(category.id, index);
+      const categoryUuid = deterministicUuid(`${store.slug}:category:${category.id}`);
+      originalCategoriesBySlug.set(categoryUuid, category);
+      originalCategoryOrder.set(categoryUuid, index);
       category.items.forEach((item) => {
-        originalItems.set(item.id, item);
+        const itemUuid = deterministicUuid(`${store.slug}:item:${item.id}`);
+        originalItems.set(itemUuid, item);
       });
     });
 
@@ -113,7 +116,7 @@ export async function applySupabaseMenu(
         : row.category;
       const fallbackCategory =
         (supabaseCategory?.slug
-          ? originalCategoriesBySlug.get(supabaseCategory.slug)
+          ? originalCategoriesBySlug.get(deterministicUuid(`${store.slug}:category:${supabaseCategory.slug}`))
           : undefined) ??
         (fallbackItem
           ? findCategoryForItem(fallbackItem, store.categories)

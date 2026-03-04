@@ -1,9 +1,12 @@
-import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
 import { createClient } from "@supabase/supabase-js";
 import mime from "mime";
+import { deterministicUuid } from "../src/lib/utils";
+import { loadEnvFile } from "./utils/load-env";
+
+loadEnvFile();
 
 type StoreFile = {
   slug: string;
@@ -55,7 +58,7 @@ const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? "menu-assets";
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   console.error(
-    "Missing Supabase credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY before running this script."
+    "Missing Supabase credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY before running this script.",
   );
   process.exit(1);
 }
@@ -99,14 +102,14 @@ async function main() {
 
   const { error: itemsError, count: itemCount } = await supabase
     .from("menu_items")
-    .upsert(itemsPayload, { onConflict: "id" , count: "exact" });
+    .upsert(itemsPayload, { onConflict: "id", count: "exact" });
 
   if (itemsError) {
     throw itemsError;
   }
 
   console.log(
-    `Synced ${categoriesPayload.length} categories and ${itemCount ?? itemsPayload.length} menu items for store "${store.slug}".`
+    `Synced ${categoriesPayload.length} categories and ${itemCount ?? itemsPayload.length} menu items for store "${store.slug}".`,
   );
   if (shouldUploadAssets) {
     console.log(`Assets uploaded to bucket "${STORAGE_BUCKET}".`);
@@ -134,7 +137,7 @@ function buildCategoriesPayload(store: StoreFile): UpsertCategory[] {
 async function buildItemsPayload(params: {
   store: StoreFile;
   categoryIdBySlug: Map<string, string>;
-  supabase: ReturnType<typeof createClient>;
+  supabase: any;
   uploadAssets: boolean;
 }): Promise<UpsertItem[]> {
   const { store, categoryIdBySlug, supabase, uploadAssets } = params;
@@ -153,12 +156,12 @@ async function buildItemsPayload(params: {
     for (const [itemIndex, item] of category.items.entries()) {
       const imagePath = item.image
         ? await prepareAssetPath({
-            itemImagePath: item.image,
-            storeSlug: store.slug,
-            supabase,
-            uploadAssets,
-            cache: assetCache,
-          })
+          itemImagePath: item.image,
+          storeSlug: store.slug,
+          supabase,
+          uploadAssets,
+          cache: assetCache,
+        })
         : null;
 
       payload.push({
@@ -180,14 +183,6 @@ async function buildItemsPayload(params: {
   return payload;
 }
 
-function deterministicUuid(seed: string): string {
-  const hash = createHash("sha1").update(seed).digest();
-  const bytes = Buffer.from(hash.slice(0, 16));
-  bytes[6] = (bytes[6] & 0x0f) | 0x50; // Version 5
-  bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant RFC4122
-  const hex = bytes.toString("hex");
-  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
-}
 
 function normalisePrice(price: number): number {
   if (!Number.isFinite(price)) {
@@ -196,21 +191,23 @@ function normalisePrice(price: number): number {
   return Math.round(price * 100);
 }
 
-async function ensureBucket(
-  supabase: ReturnType<typeof createClient>,
-  bucketName: string
-) {
+async function ensureBucket(supabase: any, bucketName: string) {
   const { data: bucketList, error } = await supabase.storage.listBuckets();
   if (error) {
     throw error;
   }
 
-  const exists = bucketList?.some((bucket) => bucket.name === bucketName);
+  const exists = bucketList?.some(
+    (bucket: { name: string }) => bucket.name === bucketName,
+  );
   if (!exists) {
-    const { error: createError } = await supabase.storage.createBucket(bucketName, {
-      public: true,
-      fileSizeLimit: "50mb",
-    });
+    const { error: createError } = await supabase.storage.createBucket(
+      bucketName,
+      {
+        public: true,
+        fileSizeLimit: "50mb",
+      },
+    );
     if (createError) {
       throw createError;
     }
@@ -221,7 +218,7 @@ async function ensureBucket(
 async function prepareAssetPath(params: {
   itemImagePath: string;
   storeSlug: string;
-  supabase: ReturnType<typeof createClient>;
+  supabase: any;
   uploadAssets: boolean;
   cache: Map<string, string>;
 }): Promise<string> {
@@ -241,7 +238,12 @@ async function prepareAssetPath(params: {
   }
 
   const relativePath = normalised.replace(/^\//, "");
-  const absolutePath = path.join(process.cwd(), relativePath.startsWith("public/") ? relativePath : path.join("public", relativePath));
+  const absolutePath = path.join(
+    process.cwd(),
+    relativePath.startsWith("public/")
+      ? relativePath
+      : path.join("public", relativePath),
+  );
   const fileBuffer = await fs.readFile(absolutePath);
   const contentType = mime.getType(absolutePath) ?? "application/octet-stream";
 
@@ -252,7 +254,7 @@ async function prepareAssetPath(params: {
     upsert: true,
   });
 
-  if (uploadError && uploadError.message && !uploadError.message.includes("Duplicate")) {
+  if (uploadError?.message && !uploadError.message.includes("Duplicate")) {
     throw uploadError;
   }
 
@@ -264,7 +266,9 @@ async function prepareAssetPath(params: {
   return publicUrl;
 }
 
-function normaliseImagePath(pathValue: string | null | undefined): string | null {
+function normaliseImagePath(
+  pathValue: string | null | undefined,
+): string | null {
   if (!pathValue) return null;
   if (pathValue.startsWith("http://") || pathValue.startsWith("https://")) {
     return pathValue;
