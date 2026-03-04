@@ -110,7 +110,12 @@ export async function applySupabaseMenu(
     >();
 
     for (const row of rows) {
-      const fallbackItem = originalItems.get(row.id);
+      if (!row.id || !row.name) continue;
+
+      const fallbackItem =
+        originalItems.get(row.id) ??
+        findItemByName(row.name, store.categories);
+
       const supabaseCategory = Array.isArray(row.category)
         ? row.category[0]
         : row.category;
@@ -220,9 +225,23 @@ function findCategoryForItem(
 ): MenuCategory | undefined {
   if (!item) return undefined;
   for (const category of categories) {
-    if (category.items.some((categoryItem) => categoryItem.id === item.id)) {
+    if (category.items.some((categoryItem) => categoryItem.id === item.id || categoryItem.name === item.name)) {
       return category;
     }
+  }
+  return undefined;
+}
+
+function findItemByName(
+  name: string,
+  categories: MenuCategory[],
+): MenuItem | undefined {
+  const normalizedSearchName = name.trim().toLowerCase();
+  for (const category of categories) {
+    const item = category.items.find(
+      (i) => i.name.trim().toLowerCase() === normalizedSearchName,
+    );
+    if (item) return item;
   }
   return undefined;
 }
