@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-postgres",
+        "--db-url",
+        "postgresql://postgres.povlddtpwqjpmvoopkll:royceapex0987@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres"
+      ]
+    }
+  }
+}

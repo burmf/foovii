@@ -13,6 +13,10 @@ export type MenuItem = {
   currency?: string;
   tags?: string[];
   image?: string;
+  /** Android / PC 用 GLB モデルのパス */
+  modelUrl?: string;
+  /** iOS Quick Look 用 USDZ モデルのパス */
+  modelUrlUsdz?: string;
 };
 
 export type StoreConfig = {

@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-
+import { useCartStore, useCartTotals } from "@/lib/store/use-cart-store";
 import type { StoreConfig } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-
-import { useCart } from "./cart-context";
 
 interface CartReviewPanelProps {
   onClose: () => void;
@@ -14,12 +12,17 @@ interface CartReviewPanelProps {
   onOrderError?: (message: string) => void;
 }
 
-export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }: CartReviewPanelProps) {
-  const { lines, subtotal, totalQuantity, increment, decrement, remove, clear } =
-    useCart();
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
-    "idle"
-  );
+export function CartReviewPanel({
+  onClose,
+  store,
+  onOrderSuccess,
+  onOrderError,
+}: CartReviewPanelProps) {
+  const { lines, increment, decrement, remove, clear } = useCartStore();
+  const { subtotal, totalQuantity } = useCartTotals();
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
   const [message, setMessage] = useState<string | null>(null);
 
   async function handlePlaceOrder() {
@@ -47,7 +50,10 @@ export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }
         throw new Error("Failed to place order");
       }
 
-      const result = (await response.json()) as { orderId?: string; orderNumber?: string };
+      const result = (await response.json()) as {
+        orderId?: string;
+        orderNumber?: string;
+      };
       setStatus("success");
       setMessage("Order placed. Staff dashboard will receive the ticket.");
       clear();
@@ -97,7 +103,9 @@ export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }
                   {line.name}
                 </p>
                 {line.notes ? (
-                  <p className="text-xs text-muted-foreground">• {line.notes}</p>
+                  <p className="text-xs text-muted-foreground">
+                    • {line.notes}
+                  </p>
                 ) : null}
                 <div className="flex items-center gap-3 pt-1">
                   <button
@@ -123,7 +131,10 @@ export function CartReviewPanel({ onClose, store, onOrderSuccess, onOrderError }
               </div>
               <div className="flex flex-col items-end gap-2">
                 <p className="text-sm font-semibold text-primary">
-                  {formatCurrency(line.price * line.quantity, line.currency ?? "AUD")}
+                  {formatCurrency(
+                    line.price * line.quantity,
+                    line.currency ?? "AUD",
+                  )}
                 </p>
                 <button
                   type="button"

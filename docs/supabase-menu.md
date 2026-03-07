@@ -98,11 +98,24 @@ SUPABASE_SERVICE_ROLE_KEY=...
 
 Once populated, Foovii will automatically pull Supabase data at build/runtime; local JSON is only used as a fallback.
 
+## Orders & Analytics
+
+Foovii now stores live orders in Supabase. Apply the DDL at `supabase/sql/orders-schema.sql` (also mirrored in the first migration) to provision:
+
+- `orders` table with JSON line items, workflow status enum, and per-store order numbers.
+- `order_history_view` for paginated history queries (`/api/orders/history`).
+- `order_metrics_view` that powers the manager analytics hourly chart.
+- Run `pnpm db:apply-orders` (requires `DATABASE_URL`) to execute the schema locally or against your Supabase instance. Pass a custom file path as an argument if needed.
+- Seed demo data via `pnpm db:seed-orders` to quickly validate `/manager` や `/api/orders/history` の表示。
+
+Server-side code connects via `DATABASE_URL` (set this to your Supabase Postgres connection string; see `config/.env.example`) and uses the service-role key for RLS compliant access.
+
 ## SQL Helper
-`supabase/sql/menu-schema.sql` contains the full DDL (tables, indexes, RLS policies, updated-at trigger). Run it once in the Supabase SQL editor or via the CLI:
+`supabase/sql/menu-schema.sql` (menu data) と `supabase/sql/orders-schema.sql`（注文・分析）に DDL をまとめています。必要に応じて Supabase SQL エディタ、または CLI で適用してください:
 
 ```bash
 supabase db remote commit --file supabase/sql/menu-schema.sql
+supabase db remote commit --file supabase/sql/orders-schema.sql
 ```
 
-Adjust currency defaults or indexes as needed for additional tenants.
+追加のテナントや指標が必要な場合は、インデックスやビューを拡張してください。

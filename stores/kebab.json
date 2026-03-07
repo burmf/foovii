@@ -1,0 +1,143 @@
+{
+    "slug": "kebab",
+    "displayName": "Istanbul Kebab House",
+    "address": "32 Swanston Street, Melbourne VIC 3000",
+    "heroImage": "/menu-images/kebab/mixed-kebab-wrap.png",
+    "theme": {
+        "primary": "#C0392B",
+        "secondary": "#FDF2E9",
+        "accent": "#E67E22",
+        "background": "#FFFFFF"
+    },
+    "categories": [
+        {
+            "id": "wraps",
+            "name": "Wraps",
+            "items": [
+                {
+                    "id": "chicken-kebab-wrap",
+                    "name": "Chicken Kebab Wrap",
+                    "description": "Grilled chicken thigh with garlic yoghurt, lettuce, tomato, and onion in warm flatbread.",
+                    "price": 14.9,
+                    "image": "/menu-images/kebab/chicken-kebab-wrap.png"
+                },
+                {
+                    "id": "lamb-kebab-wrap",
+                    "name": "Lamb Kebab Wrap",
+                    "description": "Slow-roasted lamb doner with tahini sauce, lettuce, tomato, and pickled cabbage in warm flatbread.",
+                    "price": 15.9,
+                    "image": "/menu-images/kebab/lamb-kebab-wrap.png",
+                    "modelUrl": "/models/lamb-kebab-wrap.glb",
+                    "modelUrlUsdz": "/models/lamb-kebab-wrap.usdz"
+                },
+                {
+                    "id": "falafel-wrap",
+                    "name": "Falafel Wrap (Vegan)",
+                    "description": "Crispy falafel balls with hummus, lettuce, tomato, cucumber, and chilli sauce in warm flatbread.",
+                    "price": 13.9,
+                    "image": "/menu-images/kebab/falafel-wrap.png"
+                },
+                {
+                    "id": "mixed-kebab-wrap",
+                    "name": "Mixed Kebab Wrap",
+                    "description": "Combination of chicken and lamb doner with garlic sauce, lettuce, tomato, and onion.",
+                    "price": 16.5,
+                    "image": "/menu-images/kebab/mixed-kebab-wrap.png"
+                }
+            ]
+        },
+        {
+            "id": "plates",
+            "name": "Plates",
+            "items": [
+                {
+                    "id": "chicken-plate",
+                    "name": "Chicken Plate",
+                    "description": "Grilled chicken doner over saffron rice with salad, garlic yoghurt, and warm pita.",
+                    "price": 19.9
+                },
+                {
+                    "id": "lamb-plate",
+                    "name": "Lamb Plate",
+                    "description": "Slow-roasted lamb doner over saffron rice with salad, tahini, and warm pita.",
+                    "price": 21.9
+                },
+                {
+                    "id": "mixed-plate",
+                    "name": "Mixed Plate",
+                    "description": "Chicken and lamb doner over saffron rice with salad, two sauces, and warm pita.",
+                    "price": 23.9
+                },
+                {
+                    "id": "adana-plate",
+                    "name": "Adana Kofte Plate",
+                    "description": "Spiced ground lamb skewers over bulgur pilaf with grilled peppers and tomatoes.",
+                    "price": 24.9
+                }
+            ]
+        },
+        {
+            "id": "sides",
+            "name": "Sides",
+            "items": [
+                {
+                    "id": "hummus",
+                    "name": "Hummus with Pita",
+                    "description": "Creamy house-made hummus served with two warm pita breads.",
+                    "price": 8.5,
+                    "image": "/menu-images/kebab/hummus.png"
+                },
+                {
+                    "id": "chips",
+                    "name": "Chips",
+                    "description": "Crispy golden fries seasoned with sumac salt.",
+                    "price": 6.9
+                },
+                {
+                    "id": "stuffed-grape-leaves",
+                    "name": "Stuffed Grape Leaves (4 pcs, Vegan)",
+                    "description": "Rice-stuffed vine leaves with lemon and herbs.",
+                    "price": 9.9
+                },
+                {
+                    "id": "extra-pita",
+                    "name": "Extra Pita (2 pcs)",
+                    "price": 2.5
+                }
+            ]
+        },
+        {
+            "id": "drinks",
+            "name": "Drinks",
+            "items": [
+                {
+                    "id": "ayran",
+                    "name": "Ayran",
+                    "description": "Chilled salted yoghurt drink.",
+                    "price": 4.5
+                },
+                {
+                    "id": "turkish-tea",
+                    "name": "Turkish Tea",
+                    "description": "Traditional black tea served in a tulip glass.",
+                    "price": 3.5
+                },
+                {
+                    "id": "coke",
+                    "name": "Coca-Cola",
+                    "price": 4.0
+                },
+                {
+                    "id": "coke-zero",
+                    "name": "Coke Zero",
+                    "price": 4.0
+                },
+                {
+                    "id": "water",
+                    "name": "Sparkling Water",
+                    "price": 3.0
+                }
+            ]
+        }
+    ]
+}

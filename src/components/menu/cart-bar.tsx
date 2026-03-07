@@ -1,10 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-
+import { useCartTotals } from "@/lib/store/use-cart-store";
 import { formatCurrency } from "@/lib/utils";
-
-import { useCart } from "./cart-context";
 
 interface CartBarProps {
   onReview: () => void;
@@ -12,7 +10,7 @@ interface CartBarProps {
 }
 
 export function CartBar({ onReview, isReviewOpen = false }: CartBarProps) {
-  const { subtotal, totalQuantity } = useCart();
+  const { subtotal, totalQuantity } = useCartTotals();
 
   return (
     <AnimatePresence>

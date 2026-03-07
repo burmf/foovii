@@ -119,6 +119,29 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+}
+
+@layer components {
+  .lp-container {
+    @apply max-w-7xl mx-auto px-6 lg:px-8;
+  }
+  
+  .glass-card {
+    @apply bg-white/70 dark:bg-black/70 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-2xl;
+  }
+  
+  .btn-primary {
+    @apply px-8 py-4 bg-black dark:bg-white text-white dark:text-black rounded-full font-semibold transition-all hover:scale-105 active:scale-95 shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply px-8 py-4 bg-white/10 dark:bg-black/10 backdrop-blur-md border border-black/10 dark:border-white/10 rounded-full font-semibold transition-all hover:bg-white/20 dark:hover:bg-black/20;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-black to-neutral-500 dark:from-white dark:to-neutral-500 bg-clip-text text-transparent;
   }
 }

@@ -1,13 +1,13 @@
-import postgres from 'postgres';
+import postgres from "postgres";
 
 const connectionString = process.env.DATABASE_URL;
 
 if (!connectionString) {
-  throw new Error('DATABASE_URL environment variable is not set');
+  throw new Error("DATABASE_URL environment variable is not set");
 }
 
 export const sql = postgres(connectionString, {
-  ssl: process.env.NODE_ENV === 'production' ? 'require' : 'prefer',
+  ssl: process.env.NODE_ENV === "production" ? "require" : "prefer",
 });
 
 export type Order = {
@@ -35,28 +35,33 @@ export type OrderItem = {
   notes?: string;
 };
 
-export type OrderStatus = 'pending' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+export type OrderStatus =
+  | "pending"
+  | "preparing"
+  | "ready"
+  | "completed"
+  | "cancelled";
 
 export async function generateOrderNumber(storeSlug: string): Promise<string> {
   const storePrefix = storeSlug.substring(0, 2).toUpperCase();
-  
+
   const result = await sql`
     SELECT order_number
     FROM orders
     WHERE store_slug = ${storeSlug}
-    AND order_number LIKE ${storePrefix + '-%'}
+    AND order_number LIKE ${`${storePrefix}-%`}
     ORDER BY created_at DESC
     LIMIT 1
   `;
-  
+
   let nextNumber = 1;
   if (result.length > 0) {
     const lastOrderNumber = result[0].order_number as string;
-    const lastNumber = parseInt(lastOrderNumber.split('-')[1]);
+    const lastNumber = parseInt(lastOrderNumber.split("-")[1], 10);
     nextNumber = lastNumber + 1;
   }
-  
-  return `${storePrefix}-${nextNumber.toString().padStart(3, '0')}`;
+
+  return `${storePrefix}-${nextNumber.toString().padStart(3, "0")}`;
 }
 
 export async function createOrder(data: {
@@ -70,7 +75,7 @@ export async function createOrder(data: {
   notes?: string;
 }): Promise<Order> {
   const orderNumber = await generateOrderNumber(data.store_slug);
-  
+
   const result = await sql`
     INSERT INTO orders (
       store_slug,
@@ -91,13 +96,13 @@ export async function createOrder(data: {
       ${data.customer_email || null},
       ${sql.json(data.items)},
       ${data.total_cents},
-      ${data.currency || 'AUD'},
+      ${data.currency || "AUD"},
       ${data.notes || null},
       'pending'
     )
     RETURNING *
   `;
-  
+
   const order = result[0];
   return order as Order;
 }
@@ -108,11 +113,11 @@ export async function getOrders(filters?: {
   limit?: number;
 }): Promise<Order[]> {
   let query = sql`SELECT * FROM orders WHERE 1=1`;
-  
+
   if (filters?.store_slug) {
     query = sql`${query} AND store_slug = ${filters.store_slug}`;
   }
-  
+
   if (filters?.status) {
     if (Array.isArray(filters.status)) {
       query = sql`${query} AND status = ANY(${filters.status})`;
@@ -120,24 +125,24 @@ export async function getOrders(filters?: {
       query = sql`${query} AND status = ${filters.status}`;
     }
   }
-  
+
   query = sql`${query} ORDER BY created_at DESC`;
-  
+
   if (filters?.limit) {
     query = sql`${query} LIMIT ${filters.limit}`;
   }
-  
+
   const result = await query;
-  
+
   return result as unknown as Order[];
 }
 
 export async function updateOrderStatus(
   orderId: string,
-  status: OrderStatus
+  status: OrderStatus,
 ): Promise<Order> {
-  const completedAt = status === 'completed' ? new Date() : null;
-  
+  const completedAt = status === "completed" ? new Date() : null;
+
   const result = await sql`
     UPDATE orders
     SET status = ${status},
@@ -145,11 +150,11 @@ export async function updateOrderStatus(
     WHERE id = ${orderId}
     RETURNING *
   `;
-  
+
   if (result.length === 0) {
-    throw new Error('Order not found');
+    throw new Error("Order not found");
   }
-  
+
   const order = result[0];
   return order as Order;
 }
@@ -216,18 +221,15 @@ export async function getOrderHistory(filters?: {
   }
 
   if (filters?.orderNumber) {
-    countQuery = sql`${countQuery} AND order_number ILIKE ${'%' + filters.orderNumber + '%'}`;
-    dataQuery = sql`${dataQuery} AND order_number ILIKE ${'%' + filters.orderNumber + '%'}`;
+    countQuery = sql`${countQuery} AND order_number ILIKE ${`%${filters.orderNumber}%`}`;
+    dataQuery = sql`${dataQuery} AND order_number ILIKE ${`%${filters.orderNumber}%`}`;
   }
 
   dataQuery = sql`${dataQuery} ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`;
 
-  const [countResult, dataResult] = await Promise.all([
-    countQuery,
-    dataQuery,
-  ]);
+  const [countResult, dataResult] = await Promise.all([countQuery, dataQuery]);
 
-  const total = parseInt(countResult[0].total as string);
+  const total = parseInt(countResult[0].total as string, 10);
   const orders = dataResult as unknown as Order[];
 
   return {
@@ -244,9 +246,11 @@ export async function getAnalytics(filters?: {
   endDate?: Date;
   compareWithPrevious?: boolean;
 }): Promise<Analytics> {
-  const startDate = filters?.startDate || new Date(new Date().setHours(0, 0, 0, 0));
-  const endDate = filters?.endDate || new Date(new Date().setHours(23, 59, 59, 999));
-  
+  const startDate =
+    filters?.startDate || new Date(new Date().setHours(0, 0, 0, 0));
+  const endDate =
+    filters?.endDate || new Date(new Date().setHours(23, 59, 59, 999));
+
   let query = sql`
     SELECT
       COUNT(*) as total_orders,
@@ -265,55 +269,56 @@ export async function getAnalytics(filters?: {
     AND created_at <= ${endDate.toISOString()}
     AND status != 'cancelled'
   `;
-  
+
   if (filters?.store_slug) {
     query = sql`${query} AND store_slug = ${filters.store_slug}`;
   }
-  
+
   const result = await query;
   const stats = result[0];
-  
+
   let hourlyQuery = sql`
     SELECT
-      TO_CHAR(created_at, 'HH24:00') as hour,
-      COUNT(*) as orders,
-      COALESCE(SUM(total_cents), 0) as revenue
-    FROM orders
-    WHERE created_at >= ${startDate.toISOString()}
-    AND created_at <= ${endDate.toISOString()}
-    AND status != 'cancelled'
+      TO_CHAR(hour_bucket, 'HH24:00') AS hour,
+      COALESCE(SUM(total_orders), 0) AS orders,
+      COALESCE(SUM(total_cents), 0) AS revenue
+    FROM order_metrics_view
+    WHERE hour_bucket >= ${startDate.toISOString()}
+      AND hour_bucket <= ${endDate.toISOString()}
   `;
-  
+
   if (filters?.store_slug) {
     hourlyQuery = sql`${hourlyQuery} AND store_slug = ${filters.store_slug}`;
   }
-  
+
   hourlyQuery = sql`${hourlyQuery}
-    GROUP BY TO_CHAR(created_at, 'HH24:00')
+    GROUP BY TO_CHAR(hour_bucket, 'HH24:00')
     ORDER BY hour
   `;
-  
+
   const hourlyResult = await hourlyQuery;
-  
+
   const analytics: Analytics = {
     totalRevenue: parseFloat(stats.total_revenue as string) / 100,
-    totalOrders: parseInt(stats.total_orders as string),
+    totalOrders: parseInt(stats.total_orders as string, 10),
     avgOrderValue: parseFloat(stats.avg_order_value as string) / 100,
-    avgFulfillmentTime: stats.avg_fulfillment_minutes ? parseFloat(stats.avg_fulfillment_minutes as string) : null,
-    completedOrders: parseInt(stats.completed_orders as string),
-    pendingOrders: parseInt(stats.pending_orders as string),
+    avgFulfillmentTime: stats.avg_fulfillment_minutes
+      ? parseFloat(stats.avg_fulfillment_minutes as string)
+      : null,
+    completedOrders: parseInt(stats.completed_orders as string, 10),
+    pendingOrders: parseInt(stats.pending_orders as string, 10),
     hourlyData: hourlyResult.map((row) => ({
       hour: row.hour as string,
-      orders: parseInt(row.orders as string),
+      orders: parseInt(row.orders as string, 10),
       revenue: parseFloat(row.revenue as string) / 100,
     })),
   };
-  
+
   if (filters?.compareWithPrevious) {
     const duration = endDate.getTime() - startDate.getTime();
     const prevStartDate = new Date(startDate.getTime() - duration);
     const prevEndDate = new Date(startDate.getTime() - 1);
-    
+
     let compQuery = sql`
       SELECT
         COUNT(*) as total_orders,
@@ -324,20 +329,20 @@ export async function getAnalytics(filters?: {
       AND created_at <= ${prevEndDate.toISOString()}
       AND status != 'cancelled'
     `;
-    
+
     if (filters?.store_slug) {
       compQuery = sql`${compQuery} AND store_slug = ${filters.store_slug}`;
     }
-    
+
     const compResult = await compQuery;
     const compStats = compResult[0];
-    
+
     analytics.comparison = {
       revenue: parseFloat(compStats.total_revenue as string) / 100,
-      orders: parseInt(compStats.total_orders as string),
+      orders: parseInt(compStats.total_orders as string, 10),
       avgOrderValue: parseFloat(compStats.avg_order_value as string) / 100,
     };
   }
-  
+
   return analytics;
 }

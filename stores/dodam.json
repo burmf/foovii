@@ -19,35 +19,45 @@
           "name": "Boneless Whole Chicken – Plain",
           "description": "Crispy golden boneless chicken served with pickled radish.",
           "price": 35,
-          "image": "/menu-images/dodam/boneless-whole-chicken-plain.png"
+          "image": "/menu-images/dodam/boneless-whole-chicken-plain.png",
+          "modelUrl": "/models/dodam-chicken.glb",
+          "modelUrlUsdz": "/models/dodam-chicken.usdz"
         },
         {
           "id": "sweet-spicy-chicken",
           "name": "Boneless Whole Chicken – Sweet & Spicy",
           "description": "Bold sweet & spicy glaze with pickled radish.",
           "price": 36,
-          "image": "/menu-images/dodam/boneless-whole-chicken-sweet-and-spicy.png"
+          "image": "/menu-images/dodam/boneless-whole-chicken-sweet-and-spicy.png",
+          "modelUrl": "/models/dodam-chicken.glb",
+          "modelUrlUsdz": "/models/dodam-chicken.usdz"
         },
         {
           "id": "soy-garlic-chicken",
           "name": "Boneless Whole Chicken – Soy Garlic",
           "description": "Savory soy garlic glaze with pickled radish.",
           "price": 36,
-          "image": "/menu-images/dodam/boneless-whole-chicken-soy-garlic.png"
+          "image": "/menu-images/dodam/boneless-whole-chicken-soy-garlic.png",
+          "modelUrl": "/models/dodam-chicken.glb",
+          "modelUrlUsdz": "/models/dodam-chicken.usdz"
         },
         {
           "id": "snow-cheese-chicken",
           "name": "Boneless Whole Chicken – Snow Cheese",
           "description": "Snow cheese powder dusted chicken with pickled radish.",
           "price": 36,
-          "image": "/menu-images/dodam/boneless-whole-chicken-snow-cheese.png"
+          "image": "/menu-images/dodam/boneless-whole-chicken-snow-cheese.png",
+          "modelUrl": "/models/dodam-chicken.glb",
+          "modelUrlUsdz": "/models/dodam-chicken.usdz"
         },
         {
           "id": "half-half",
           "name": "Boneless Half & Half Chicken",
           "description": "Choose two flavors, served with pickled radish.",
           "price": 38,
-          "image": "/menu-images/dodam/boneless-half-and-half-chicken.png"
+          "image": "/menu-images/dodam/boneless-half-and-half-chicken.png",
+          "modelUrl": "/models/dodam-chicken.glb",
+          "modelUrlUsdz": "/models/dodam-chicken.usdz"
         },
         {
           "id": "chips",
@@ -90,7 +100,12 @@
           "price": 34,
           "image": "/menu-images/dodam/seafood-jeon.png"
         },
-        { "id": "rice", "name": "Rice", "price": 4, "image": "/menu-images/dodam/rice.png" }
+        {
+          "id": "rice",
+          "name": "Rice",
+          "price": 4,
+          "image": "/menu-images/dodam/rice.png"
+        }
       ]
     },
     {
@@ -139,7 +154,12 @@
           "price": 18,
           "image": "/menu-images/dodam/cupbap-spicy-pork.png"
         },
-        { "id": "lunch-rice", "name": "Rice", "price": 4, "image": "/menu-images/dodam/rice.png" }
+        {
+          "id": "lunch-rice",
+          "name": "Rice",
+          "price": 4,
+          "image": "/menu-images/dodam/rice.png"
+        }
       ]
     },
     {
@@ -167,7 +187,11 @@
           "price": 14,
           "image": "/menu-images/dodam/soy-cucumbers-mushroom-vegetarian.png"
         },
-        { "id": "little-gem", "name": "Little Gem Salad (Vegan)", "price": 13 },
+        {
+          "id": "little-gem",
+          "name": "Little Gem Salad (Vegan)",
+          "price": 13
+        },
         {
           "id": "kimchi-fried-rice",
           "name": "Kimchi-Fried Rice (Vegetarian)",
@@ -210,18 +234,48 @@
           "price": 20,
           "image": "/menu-images/dodam/eggplant-twigim-vegetarian.png"
         },
-        { "id": "dinner-rice", "name": "Rice", "price": 4, "image": "/menu-images/dodam/rice.png" }
+        {
+          "id": "dinner-rice",
+          "name": "Rice",
+          "price": 4,
+          "image": "/menu-images/dodam/rice.png"
+        }
       ]
     },
     {
       "id": "drinks",
       "name": "Drinks",
       "items": [
-        { "id": "coke", "name": "Coke", "price": 4, "image": "/menu-images/dodam/coke.png" },
-        { "id": "coke-zero", "name": "Coke Zero", "price": 4, "image": "/menu-images/dodam/coke-zero.png" },
-        { "id": "sprite", "name": "Sprite", "price": 4, "image": "/menu-images/dodam/sprite.png" },
-        { "id": "bong-bong", "name": "Bong-Bong", "price": 5, "image": "/menu-images/dodam/bong-bong.png" },
-        { "id": "crushed-pear", "name": "Crushed Pear", "price": 5, "image": "/menu-images/dodam/crushed-pear.png" }
+        {
+          "id": "coke",
+          "name": "Coke",
+          "price": 4,
+          "image": "/menu-images/dodam/coke.png"
+        },
+        {
+          "id": "coke-zero",
+          "name": "Coke Zero",
+          "price": 4,
+          "image": "/menu-images/dodam/coke-zero.png"
+        },
+        {
+          "id": "sprite",
+          "name": "Sprite",
+          "price": 4,
+          "image": "/menu-images/dodam/sprite.png"
+        },
+        {
+          "id": "bong-bong",
+          "name": "Bong-Bong",
+          "price": 5,
+          "image": "/menu-images/dodam/bong-bong.png"
+        },
+        {
+          "id": "crushed-pear",
+          "name": "Crushed Pear",
+          "price": 5,
+          "image": "/menu-images/dodam/crushed-pear.png"
+        }
       ]
     }
   ]

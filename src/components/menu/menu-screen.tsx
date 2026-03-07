@@ -1,12 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { AnimatePresence } from "framer-motion";
-
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { useCartStore } from "@/lib/store/use-cart-store";
 import type { MenuCategory, MenuItem, StoreConfig } from "@/lib/types";
-
 import { CartBar } from "./cart-bar";
-import { CartProvider, useCart } from "./cart-context";
 import { CartButton } from "./cart-button";
 import { CartSheet } from "./cart-sheet";
 import { MenuHeader } from "./menu-header";
@@ -37,11 +35,7 @@ export function MenuScreen({ store, categories }: MenuScreenProps) {
     } as CSSProperties;
   }, [store.theme]);
 
-  return (
-    <CartProvider>
-      <MenuView store={store} categories={categories} style={themedStyle} />
-    </CartProvider>
-  );
+  return <MenuView store={store} categories={categories} style={themedStyle} />;
 }
 
 function MenuView({
@@ -51,16 +45,13 @@ function MenuView({
 }: MenuScreenProps & { style: CSSProperties }) {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [reviewOpen, setReviewOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(
-    categories[0]?.id ?? ""
-  );
-  const [toast, setToast] = useState<
-    | { id: number; message: string; tone?: "success" | "error" }
-    | null
-  >(
-    null
-  );
-  const { addItem } = useCart();
+  const [activeCategory, setActiveCategory] = useState(categories[0]?.id ?? "");
+  const [toast, setToast] = useState<{
+    id: number;
+    message: string;
+    tone?: "success" | "error";
+  } | null>(null);
+  const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     if (!toast) return;
@@ -71,7 +62,9 @@ function MenuView({
   useEffect(() => {
     const sections = categories
       .map((category) => document.getElementById(category.id))
-      .filter((section): section is HTMLElement => section instanceof HTMLElement);
+      .filter(
+        (section): section is HTMLElement => section instanceof HTMLElement,
+      );
 
     if (sections.length === 0) {
       return;
@@ -95,7 +88,9 @@ function MenuView({
         }
       }
 
-      setActiveCategory((current) => (current === nextActive ? current : nextActive));
+      setActiveCategory((current) =>
+        current === nextActive ? current : nextActive,
+      );
     };
 
     updateActiveCategory();
@@ -145,14 +140,8 @@ function MenuView({
           ))}
         </div>
       </div>
-      <CartBar
-        onReview={() => setReviewOpen(true)}
-        isReviewOpen={reviewOpen}
-      />
-      <CartButton
-        onClick={() => setReviewOpen(true)}
-        isOpen={reviewOpen}
-      />
+      <CartBar onReview={() => setReviewOpen(true)} isReviewOpen={reviewOpen} />
+      <CartButton onClick={() => setReviewOpen(true)} isOpen={reviewOpen} />
       {selectedItem ? (
         <MenuItemModal
           item={selectedItem}

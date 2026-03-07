@@ -28,16 +28,9 @@
   * Cart（モバイル固定バー、PCは右ドロワー）
   * Checkout（注文レビュー、テーブルNo.入力、特記事項）
   * AR button（`<model-viewer>`で3D表示）※表示のみ
-* Staff Dashboard（/staff）
+* Hosting/Build
 
-  * Live order feed（新規/調理中/提供/完了）
-  * テーブル/ステータス変更、サウンド通知
-* Manager View（/manager）
-
-  * 日次/週次売上、人気商品Top、ピーク時間帯
-* Multi-tenant
-
-  * storeSlugでテーマ/ロゴ/メニュー切替、RLS前提の権限制御（Phase2で有効化）
+  * Next.js + Tailwind、Vercelデプロイ
 * Hosting/Build
 
   * Next.js + Tailwind、Vercelデプロイ
@@ -53,8 +46,7 @@
 ## 3. 関係者・ペルソナ
 
 * Guest（来店客）: スマホで英語UIを操作、ARで料理を確認、席からオーダー。
-* Staff（ホール/キッチン）: 新規注文の把握、調理・提供ステータス更新。
-* Manager/Owner: 売上・回転率・人気商品確認、営業時間/テーマ更新。
+* Guest（来店客）: スマホで英語UIを操作、ARで料理を確認、席からオーダー。
 * Foovii Admin: 店舗作成、テーマ・権限・料金管理。
 
 ---
@@ -62,8 +54,7 @@
 ## 4. ユーザーストーリー（抜粋）
 
 * Guest: “As a guest, I can scan a QR and see **English** menu with photos/AR and add items with options.”
-* Staff: “As staff, I can see incoming orders in real time and change status with one click.”
-* Manager: “As a manager, I can view daily revenue and best sellers without exporting CSV.”
+* Guest: “As a guest, I can scan a QR and see **English** menu with photos/AR and add items with options.”
 * Admin: “As an admin, I can onboard a new store by uploading logo/theme/menu JSON.”
 
 ---
@@ -143,8 +134,7 @@ export interface CartLine { key: string; itemId: string; qty: number; chosen: { 
 ## 9. 画面遷移・状態
 
 * Guest Flow: `Scan QR → /menu/[storeSlug] → Browse → Add → Review → Place order (mock)`
-* Staff Flow: `/staff` でリアルタイム更新（MVPはポーリング or メモリ）
-* Manager Flow: `/manager` で集計（MVPはダミーデータ）
+
 
 ---
 
@@ -153,8 +143,7 @@ export interface CartLine { key: string; itemId: string; qty: number; chosen: { 
 * `/menu/dodam` で英語UIの注文フローが**エラーなし**で最後まで体験できる
 * モバイルで**下部固定カート**が動作し、数量増減・削除が可能
 * Item Modalで**必須モディファイア未選択時はAdd不可**
-* `/staff` で注文が**即時に可視化**（MVPはモック）
-* `/manager` でダミー集計が表示
+
 
 ---
 
@@ -178,7 +167,7 @@ export interface CartLine { key: string; itemId: string; qty: number; chosen: { 
 
 * Conversion Rate（Add→Place）：≥ 25%
 * Median TTI（初回操作可能まで）：≤ 2s
-* Staff 応答時間（New→In Progress）：≤ 60s
+
 
 ---
 
@@ -193,5 +182,5 @@ export interface CartLine { key: string; itemId: string; qty: number; chosen: { 
 
 * Header: `Dine-in · Table {code}`
 * Buttons: `Add`, `View in AR`, `Review order`, `Place order`, `Remove`, `Clear`
-* Status: `New`, `In Progress`, `Ready`, `Served`
+
 * Messages: `Your cart is empty.`, `Required option missing.`

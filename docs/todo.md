@@ -58,6 +58,7 @@
 - [x] Header やテーマカラーへ反映
 - [x] `/menu/dodam`・`/menu/soy38` などの URL パターンを確認
 - [ ] Supabase DB へ移行（`menu_categories` / `menu_items` と Storage バケット整備）
+- [x] Supabase `orders` テーブルとビューの設計（履歴・分析用）
 - [x] Supabase メニュー同期スクリプト（`scripts/sync-supabase-menu.ts`）を追加
 - [x] 同期スクリプトで `--upload-assets` オプションにより Storage へ画像をアップロード可能にする
 - [x] Supabase メニュー取得時にローカル画像メタデータへフォールバック
@@ -67,11 +68,15 @@
 - [x] カンバン UI（New / In Progress / Ready / Served）を実装
 - [x] ダミー注文データを 3〜5 件生成
 - [x] カラム内操作でステータス変更（クリック式）を実装
+- [x] アクションメニュー＋キャンセル確認モーダルで誤操作を防止
 - [ ] Phase 2 で Supabase Realtime を導入予定
 
 ## 📊 5. `/manager/`（店舗マネージャー用）
 - [x] KPI カード（Revenue, Orders, Avg Order Value）を静的値で表示
 - [x] Recharts で時間別オーダーグラフを描画
+- [x] Order History タブを追加し、検索・ステータス/日付フィルタ・ページネーション・詳細モーダルを実装
+- [x] `/api/orders/history` から履歴を取得するフロントエンドフックを実装
+- [ ] KPI / Order History を Supabase 集計データへ切り替え
 - [ ] Phase 2 で Supabase 集計データへ接続
 
 ## ⚙️ 6. `/api/orders/`（MVP モック）
@@ -80,6 +85,7 @@
   ```json
   { "orderId": "mock123", "status": "ok" }
   ```
+- [x] `/api/orders/history` エンドポイントで履歴取得（フィルタ・ページング対応）を実装
 - [ ] Phase 2 で Supabase `orders` テーブル保存に置き換え
 
 ## 💳 7. Stripe（Phase 2 プレースホルダ）
@@ -102,7 +108,9 @@
 - [x] `docs/AGENTS.md`（AI 支援開発ガイド）を最新化
 - [x] `docs/yoken`（SRS）および本 `docs/todo.md` をリポジトリ直下の README から参照可能にする
 - [x] 仕様変更は `docs/changelog.md` へ追記
-- [ ] 各フェーズ完了時に「Phase Report」を作成
+- [x] 2025-10-29: マネージャー注文履歴／スタッフボード改善の変更履歴を更新
+- [x] 2025-11-01: Supabase 注文スキーマ適用・シード手順を整備
+- [x] 各フェーズ完了時に「Phase Report」を作成
 - [x] `docs/dodam-menu.md` に DODAM オンラインメニューを記録する（2025-10-17）
 
 ## ✅ 11. MVP 完了条件

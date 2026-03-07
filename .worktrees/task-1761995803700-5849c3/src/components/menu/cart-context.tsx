@@ -15,7 +15,10 @@ type CartLine = {
 };
 
 type CartAction =
-  | { type: "add"; payload: { item: MenuItem; quantity: number; notes?: string } }
+  | {
+      type: "add";
+      payload: { item: MenuItem; quantity: number; notes?: string };
+    }
   | { type: "increment"; payload: { id: string } }
   | { type: "decrement"; payload: { id: string } }
   | { type: "remove"; payload: { id: string } }
@@ -41,7 +44,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case "add": {
       const { item, quantity, notes } = action.payload;
       const existingIndex = state.lines.findIndex(
-        (line) => line.id === buildLineId(item.id, notes)
+        (line) => line.id === buildLineId(item.id, notes),
       );
 
       if (existingIndex >= 0) {
@@ -72,7 +75,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       const updated = state.lines.map((line) =>
         line.id === action.payload.id
           ? { ...line, quantity: line.quantity + 1 }
-          : line
+          : line,
       );
       return { lines: updated };
     }
@@ -81,7 +84,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         .map((line) =>
           line.id === action.payload.id
             ? { ...line, quantity: Math.max(0, line.quantity - 1) }
-            : line
+            : line,
         )
         .filter((line) => line.quantity > 0);
       return { lines: updated };
@@ -107,11 +110,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(() => {
     const subtotal = state.lines.reduce(
       (sum, line) => sum + line.price * line.quantity,
-      0
+      0,
     );
     const totalQuantity = state.lines.reduce(
       (sum, line) => sum + line.quantity,
-      0
+      0,
     );
     return {
       lines: state.lines,
@@ -123,8 +126,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         dispatch({ type: "increment", payload: { id } }),
       decrement: (id: string) =>
         dispatch({ type: "decrement", payload: { id } }),
-      remove: (id: string) =>
-        dispatch({ type: "remove", payload: { id } }),
+      remove: (id: string) => dispatch({ type: "remove", payload: { id } }),
       clear: () => dispatch({ type: "clear" }),
     };
   }, [state.lines]);

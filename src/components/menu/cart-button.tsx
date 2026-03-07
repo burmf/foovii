@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 
-import { useCart } from "./cart-context";
+import { useCartTotals } from "@/lib/store/use-cart-store";
 
 interface CartButtonProps {
   onClick: () => void;
@@ -11,7 +11,7 @@ interface CartButtonProps {
 }
 
 export function CartButton({ onClick, isOpen = false }: CartButtonProps) {
-  const { totalQuantity } = useCart();
+  const { totalQuantity } = useCartTotals();
 
   if (isOpen) {
     return null;

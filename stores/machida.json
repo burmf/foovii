@@ -1,0 +1,160 @@
+{
+  "slug": "machida",
+  "displayName": "Machida Shoten Melbourne",
+  "address": "Shop G04, 525 Collins Street, Melbourne",
+  "theme": {
+    "primary": "#1A1A1A",
+    "secondary": "#F5F0E8",
+    "accent": "#D4A574",
+    "background": "#FFFFFF"
+  },
+  "categories": [
+    {
+      "id": "ramen",
+      "name": "Ramen",
+      "items": [
+        {
+          "id": "original-yokohama",
+          "name": "Original Yokohama",
+          "description": "Signature Yokohama-style ramen with chashu, spinach, quail egg, and nori.",
+          "price": 19.5
+        },
+        {
+          "id": "zebra-garlic-butter",
+          "name": "Zebra Garlic Butter",
+          "description": "Yokohama ramen with chashu, spinach, quail egg, butter, black garlic oil, and nori.",
+          "price": 22.5
+        },
+        {
+          "id": "max-yokohama",
+          "name": "MAX Yokohama",
+          "description": "Ultimate ramen with 3 pieces of chashu, spinach, seasoned egg, quail egg, and 3 pieces of nori.",
+          "price": 29.9
+        },
+        {
+          "id": "spicy-miso",
+          "name": "Spicy Miso",
+          "description": "Rich miso broth with chashu, spicy pork, vegetables, quail egg, and spicy umami oil.",
+          "price": 22.5
+        },
+        {
+          "id": "ultimate-pork-chashu",
+          "name": "Ultimate Pork Chashu",
+          "description": "For chashu lovers – 5 pieces of chashu, spinach, quail egg, and nori.",
+          "price": 34.9
+        }
+      ]
+    },
+    {
+      "id": "soupless",
+      "name": "Soupless & Dipping",
+      "items": [
+        {
+          "id": "aburasoba",
+          "name": "Aburasoba",
+          "description": "Soupless ramen with shredded chashu, spring onion, bamboo shoot, and egg yolk.",
+          "price": 19.5
+        },
+        {
+          "id": "aburasoba-max",
+          "name": "Aburasoba MAX",
+          "description": "Enhanced soupless ramen with shredded chashu, fried onion, parmesan cheese, and egg yolk.",
+          "price": 25.9
+        },
+        {
+          "id": "tsukemen",
+          "name": "Tsukemen",
+          "description": "Dipping-style cold noodles with chashu, spinach, quail egg, and shredded nori.",
+          "price": 27.5
+        }
+      ]
+    },
+    {
+      "id": "sides",
+      "name": "Sides",
+      "items": [
+        {
+          "id": "gyoza",
+          "name": "Gyoza (6 pcs)",
+          "description": "Pan-fried pork and vegetable dumplings.",
+          "price": 9.5
+        },
+        {
+          "id": "karaage",
+          "name": "Karaage (5 pcs)",
+          "description": "Crispy Japanese fried chicken.",
+          "price": 12.5
+        },
+        {
+          "id": "chashu-rice",
+          "name": "Chashu Rice",
+          "description": "Steamed rice topped with sliced chashu and green onions.",
+          "price": 8.5
+        },
+        {
+          "id": "fried-rice",
+          "name": "Fried Rice",
+          "description": "Wok-fried rice with egg and vegetables.",
+          "price": 14.5
+        },
+        {
+          "id": "extra-noodles",
+          "name": "Extra Noodles",
+          "description": "Additional serving of noodles.",
+          "price": 3.5
+        },
+        {
+          "id": "extra-chashu",
+          "name": "Extra Chashu (2 pcs)",
+          "description": "Two additional slices of braised pork belly.",
+          "price": 5.5
+        },
+        {
+          "id": "seasoned-egg",
+          "name": "Seasoned Egg",
+          "description": "Soy-marinated soft-boiled egg.",
+          "price": 3.0
+        }
+      ]
+    },
+    {
+      "id": "drinks",
+      "name": "Drinks",
+      "items": [
+        {
+          "id": "coke",
+          "name": "Coca-Cola",
+          "price": 4.5
+        },
+        {
+          "id": "coke-zero",
+          "name": "Coke Zero",
+          "price": 4.5
+        },
+        {
+          "id": "sprite",
+          "name": "Sprite",
+          "price": 4.5
+        },
+        {
+          "id": "ramune",
+          "name": "Ramune",
+          "description": "Japanese marble soda.",
+          "price": 5.5
+        },
+        {
+          "id": "asahi",
+          "name": "Asahi Super Dry",
+          "description": "Japanese draft beer.",
+          "price": 9.0
+        },
+        {
+          "id": "sapporo",
+          "name": "Sapporo Premium",
+          "description": "Japanese lager beer.",
+          "price": 9.0
+        }
+      ]
+    }
+  ]
+}

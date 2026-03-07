@@ -129,6 +129,12 @@ Preferred communication style: Simple, everyday language.
 - **ESLint + Prettier**: Code formatting with 2-space indents, semicolons enforced
 - **pnpm**: Package manager (workspace-ready for future monorepo expansion)
 - **tsx**: Script runner for `sync-supabase-menu.ts`
+- **Schema helpers**:
+  - `pnpm db:apply-orders` — Apply Supabase orders schema (requires `DATABASE_URL`)
+  - `pnpm db:seed-orders` — Insert sample orders for dashboard validation
+- **MCP servers**:
+  - `pnpm exec chrome-devtools-mcp` (local CLI)
+  - Supabase MCP via HTTPS (`https://mcp.supabase.com/mcp?project_ref=${SUPABASE_PROJECT_REF}`); requires `SUPABASE_ACCESS_TOKEN` for Authorization headerciteturn0search0turn0search1
 
 ### Environment Variables
 Required in `.env.local` (see `config/.env.example`):
@@ -136,6 +142,9 @@ Required in `.env.local` (see `config/.env.example`):
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Public anon key
 - `SUPABASE_SERVICE_ROLE_KEY` - Service role key for sync script
 - `SUPABASE_STORAGE_BUCKET` - Storage bucket name (default: `menu-assets`)
+- `DATABASE_URL` - Supabase Postgres connection string (used by server-side order queries)
+- `SUPABASE_PROJECT_REF` - Project ID (Project Settings → General)
+- `SUPABASE_ACCESS_TOKEN` - Supabase access token used to authenticate the MCP server
 
 ### Third-Party Integrations
 - **Vercel** (deployment target): Environment variables managed via project settings

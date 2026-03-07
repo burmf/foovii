@@ -1,0 +1,106 @@
+{
+    "slug": "pizza",
+    "displayName": "Napoli's Pizza",
+    "address": "123 Lygon St, Carlton VIC 3053",
+    "heroImage": "/menu-images/pizza/margherita.png",
+    "theme": {
+        "primary": "#D32F2F",
+        "secondary": "#FFF9C4",
+        "accent": "#FFC107",
+        "background": "#FFFFFF"
+    },
+    "categories": [
+        {
+            "id": "pizza",
+            "name": "Pizza",
+            "items": [
+                {
+                    "id": "pizza-cosmic",
+                    "name": "Cosmic Pizza",
+                    "description": "A special pizza from outer space! Features premium toppings and a cosmic glow.",
+                    "price": 32.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/margherita.png",
+                    "modelUrl": "/models/cosmic-pizza.glb",
+                    "modelUrlUsdz": "/models/cosmic-pizza.usdz"
+                },
+                {
+                    "id": "pizza-margherita",
+                    "name": "Margherita",
+                    "description": "Classic tomato sauce, fresh mozzarella, and aromatic basil on a hand-stretched crust.",
+                    "price": 22.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/margherita.png"
+                },
+                {
+                    "id": "pizza-pepperoni",
+                    "name": "Pepperoni",
+                    "description": "Spicy pepperoni slices over melted mozzarella and rich tomato sauce.",
+                    "price": 24.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/pepperoni.png"
+                },
+                {
+                    "id": "pizza-quattro-formaggi",
+                    "name": "Quattro Formaggi",
+                    "description": "A rich blend of mozzarella, gorgonzola, parmesan, and provolone on a white base.",
+                    "price": 26.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/quattro-formaggi.png"
+                },
+                {
+                    "id": "pizza-marinara",
+                    "name": "Marinara",
+                    "description": "Traditional tomato sauce with garlic, oregano, and extra virgin olive oil.",
+                    "price": 18.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/marinara.png"
+                },
+                {
+                    "id": "pizza-prosciutto",
+                    "name": "Prosciutto e Rucola",
+                    "description": "Tomato sauce, mozzarella, topped with fresh prosciutto, rocket, and shaved parmesan.",
+                    "price": 27.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/prosciutto.png"
+                },
+                {
+                    "id": "pizza-calzone",
+                    "name": "Classic Calzone",
+                    "description": "Folded pizza stuffed with ricotta, salami, mozzarella, and black pepper.",
+                    "price": 25.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/calzone.png"
+                }
+            ]
+        },
+        {
+            "id": "sides",
+            "name": "Sides",
+            "items": [
+                {
+                    "id": "side-garlic-bread",
+                    "name": "Garlic Bread",
+                    "description": "Wood-fired bread with garlic butter and herbs.",
+                    "price": 10.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/garlic-bread.png"
+                }
+            ]
+        },
+        {
+            "id": "desserts",
+            "name": "Desserts",
+            "items": [
+                {
+                    "id": "dessert-tiramisu",
+                    "name": "Classic Tiramisu",
+                    "description": "Coffee-soaked ladyfingers layered with mascarpone cream.",
+                    "price": 14.00,
+                    "currency": "AUD",
+                    "image": "/menu-images/pizza/tiramisu.png"
+                }
+            ]
+        }
+    ]
+}
